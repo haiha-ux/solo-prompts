@@ -36,29 +36,41 @@ Phân vân → NGHIÊN CỨU khảo sát ngắn (sai hướng build đắt hơn)
 ## Phân vai
 | Vai | Model | Làm | Trả về |
 |---|---|---|---|
-| Điều phối viên | Opus (phiên chính) | phân loại, chia việc, phán quyết, ghi sổ | — |
-| `sp:scout` | haiku | search web/docs/code, tổng hợp nhiều nguồn | ≤6 dòng + file `.ai/runs/` |
-| `sp:grunt` | haiku | chạy test/lệnh, chạy lặp thí nghiệm, việc cơ học | 1 dòng OK/FAIL |
-| `sp:builder` | sonnet | code/thí nghiệm/hạ tầng theo TDD, worktree | ≤6 dòng |
-| `sp:critic` | sonnet | `code` review · `gia_thuyet` red-team + thẩm định nguồn · `loi` root cause | ≤8 dòng, luôn spawn mới |
+| Điều phối viên | Opus (phiên chính) | phân loại, kế hoạch, chia việc, phán quyết, **người duy nhất ghi** STATE / CLAUDE.md / MAP.md / findings / so_cai | — |
+| `sp:scout` | haiku | search web/docs/code, phân tích ảnh hưởng (call site, test) có số liệu | ≤6 dòng + file `.ai/runs/` |
+| `sp:grunt` | haiku | chạy lệnh: test, QUÉT rác/dead code, sinh `MAP.auto.md`, số liệu sức khỏe, chạy lặp thí nghiệm | 1 dòng OK/FAIL |
+| `sp:builder` | sonnet | code/scaffold/thí nghiệm theo TDD trong worktree; **cổng bắt buộc**: TÁI DÙNG · LIÊN KẾT · PHẠM VI · CHECK · MAP | ≤9 dòng có nhãn |
+| `sp:critic` | sonnet | 6 chế độ: `code` (8 nhóm) · `gia_thuyet` · `loi` · `ke_hoach` · `kien_truc` · `suc_khoe` — luôn spawn mới | ≤10 dòng |
 Không dùng Workflow tool — chỉ Agent tool (`model`, `run_in_background`, `isolation: "worktree"`, SendMessage).
 
-## Bộ nhớ trong project (v3.1: 8–12 file → v4: 2 file nạp + kho tra cứu)
-| File | Nạp? | Nội dung |
-|---|---|---|
-| `CLAUDE.md` ≤80 dòng | tự nạp | chế độ, lệnh, **giao thức điều phối**, luật code, gotchas |
-| `.ai/STATE.md` ≤40 dòng | đầu phiên | việc, đang chạy, nhật ký 10 dòng, chi phí, tiếp theo |
-| `.ai/findings.md` ≤60 dòng | đầu phiên (nghiên cứu) | đã chốt / đang sống / **đường chết** / hướng tiếp / cổng |
-| `.ai/so_cai.md` | grep theo id | sổ cái H (giả thuyết) / E (thí nghiệm) / V (phán quyết) |
-| `.ai/runs/` + `INDEX.md` | khi cần | output subagent, nguồn có tier A/B/C |
-| `SPEC.md`, `tests/acceptance/` | triển khai | từ cổng nghiên cứu |
-Ghi theo sự kiện (mỗi quyết định), không đợi "cuối phiên". Bỏ: `system_map.md` (codegraph/grep thay), `bo_nho_phien`, `roadmap`, `du_an_config`, `PROJECT_BRIEF`, `agent_rules`, phân loại S/M/L/XL.
+## Bộ nhớ + quản lý codebase trong project (theo quy mô, tự suy)
+| File | Quy mô | Ai ghi | Nạp |
+|---|---|---|---|
+| `CLAUDE.md` ≤80 dòng: chế độ, **quy mô**, lệnh, giao thức điều phối, **Cấu trúc** (kiến trúc, run file, luồng tầng; S: vai trò module), luật code, **Quyết định**, Gotchas | mọi | điều phối viên | tự nạp |
+| `.ai/STATE.md` ≤40 dòng: việc, đang chạy, nhật ký, **sức khỏe**, chi phí, tiếp theo | mọi | điều phối viên | đầu phiên |
+| `.ai/ref/` — bản sao tham chiếu của plugin (kiến trúc, run file, bugfix, mốc, sức khỏe, sơ đồ, mẫu /goal) | mọi | lệnh `cp` | khi cần |
+| `.ai/MAP.md` vai trò module ≤40 dòng · `.ai/MAP.auto.md` sinh bằng lệnh (file, class, method public, import) | M+ | điều phối viên · grunt | đầu phiên · khi cần |
+| `.ai/brief.md` mục tiêu/phạm vi/NGOÀI/tiêu chí/rủi ro · `.ai/ke_hoach.md` mốc · `.ai/no_ky_thuat.md` | M+ | điều phối viên | khi lập kế hoạch |
+| `docs/kien_truc.md` (Mermaid) · `docs/contracts/` · `docs/quyet_dinh/` (ADR) · `.ai/reuse.md` | L | builder (`docs/`) · điều phối viên (`reuse.md`, ADR) | khi cần |
+| `.ai/findings.md` · `.ai/so_cai.md` · `.ai/runs/` + `INDEX.md` · `SPEC.md` · `tests/acceptance/` | nghiên cứu / triển khai | điều phối viên · scout | đầu phiên (findings) · grep |
+Quy mô (lấy mức cao nhất): S <20 file, 1–2 module, không tích hợp ngoài · M 20–200 file hoặc 3–8 module hoặc có DB/API ngoài · L >200 file hoặc >8 module hoặc ≥4 tích hợp ngoài (chỉ tự tăng khi vượt >20%). Ghi theo sự kiện, không đợi "cuối phiên".
+
+## Kế thừa từ v3.1 — đặt ở nơi được THỰC THI
+| v3.1 | v4 |
+|---|---|
+| Kiến trúc 4 tầng Service+Facade, luật luồng, khi nào không dùng, cây monolith/microservices | `.ai/ref/kien_truc.md` + luật trong `sp:builder` + critic nhóm KIẾN TRÚC BLOCK |
+| Run file ở root tự bootstrap, tách `startup/` | `run_file.md` (mẫu dùng `importlib.metadata`, venv, `--check`, ngưỡng tách 300 dòng) |
+| `system_map` + verify đầu phiên/sau task | `MAP.md` (vai trò) + `MAP.auto.md` (sinh bằng lệnh, không ảo giác) + lệnh git phát hiện file A/D/R |
+| Quy tắc 70%, liên kết module, phạm vi, fallback, dead code, self-review | cổng báo cáo của builder + grunt QUÉT (dead code 0 caller) + critic `code` 8 nhóm |
+| Bugfix 7 bước, debug theo tầng | `bugfix.md` + critic `loi` |
+| PHAT_TRIEN: mốc, NGOÀI phạm vi, rủi ro, rollback vùng nhạy cảm, scope check, contracts, ADR | `moc.md` + critic `ke_hoach` |
+| KIEN_TRUC: Mermaid, sequence, ma trận, đăng ký module, kiểm hợp lệ | `so_do.md` + critic `kien_truc` |
+| CHAT_LUONG: health check, ngưỡng, điểm, mức xử lý, reuse, dashboard, nợ | `suc_khoe.md` + grunt (số liệu) + critic `suc_khoe` (chấm) + `sp:bao-tri` |
+| Nhánh `fix/feature/...`, commit format | `sp:xay-dung` bước 2 |
+Bỏ có chủ đích: cài codegraph ở mọi prompt · mốc 5/15/30 phút · hỏi 3 câu quy mô · `bo_nho_phien`/`roadmap`/`du_an_config`/`agent_rules` (gộp vào STATE/CLAUDE.md/agent) · tự merge PR.
 
 ## Viết /goal đúng cách
-Giám khảo `/goal` là model đọc **transcript**, không đọc file → điều kiện phải là **bằng chứng in ra màn hình** (output test, `grep` sổ cái) + **trần vòng** (`Tối đa N vòng`, agent in `Vòng k/N`). Mẫu sẵn trong `sp:nghien-cuu` và `sp:xay-dung`.
-
-## Giữ lại từ v3.1 (gọn về 1 chỗ: `builder.md` + `critic.md` + 1 dòng trong CLAUDE.md)
-Chống fallback chồng (≤2 nhánh) · không dead code, mọi symbol có nơi gọi · tái dùng trước khi viết · TDD cho logic/bugfix · root cause + debug theo tầng · gotchas "biết mất phải học lại".
+Giám khảo `/goal` là model đọc **transcript**, không đọc file → điều kiện phải là **bằng chứng in ra màn hình** (output test, `grep` sổ cái) + **trần vòng** (`Tối đa N vòng`, agent in `Vòng k/N`). Mẫu sẵn: `.ai/ref/goal.md` và `.ai/ref/goal_nghien_cuu.md`.
 
 ## Token (đo bằng `claude plugin details sp@solo-prompts`; v3.1 quy đổi cùng tỷ lệ ~2.1 byte/token)
 | | v3.1 | v4 |

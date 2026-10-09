@@ -1,6 +1,6 @@
 {
   "name": "sp",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Solo Prompts v4 — Opus điều phối agent sonnet/haiku; 3 chế độ NGHIÊN CỨU / XÂY DỰNG / TRIỂN KHAI; vòng lặp /goal; tiết kiệm token.",
   "author": { "name": "haiha" },
   "keywords": ["orchestration", "research", "multi-agent", "goal", "vietnamese"]

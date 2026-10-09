@@ -1,38 +1,28 @@
 ---
 name: xay-dung
-description: "Vòng xây dựng / triển khai (từ SPEC.md) / debug, điều phối builder-critic-grunt. Dùng ở chế độ XÂY DỰNG hoặc TRIỂN KHAI và cho mọi vòng sửa lỗi."
+description: "Vòng xây dựng / triển khai (từ SPEC.md) / debug / mở mốc, điều phối builder-critic-grunt, giữ kiến trúc và bản đồ codebase. Dùng ở chế độ XÂY DỰNG hoặc TRIỂN KHAI và cho mọi vòng sửa lỗi."
 ---
 # Xây dựng — điều phối viên đọc 1 lần mỗi phiên (đọc lại sau khi context bị nén)
 
+## Tham chiếu: `.ai/ref/` của project (thiếu → `mkdir -p .ai/ref && cp "${CLAUDE_PLUGIN_ROOT}"/skills/*/tham-chieu/*.md .ai/ref/`)
+`kien_truc.md` 4 tầng, luật luồng, bố cục thư mục, quy mô → file quản lý, MAP, debug theo tầng · `run_file.md` run file root + startup/ · `bugfix.md` sửa lỗi 7 bước · `moc.md` mở mốc, ảnh hưởng, scope check, contracts, ADR · `trien_khai.md` TRIỂN KHAI + spike · `goal.md` mẫu /goal.
+Brief cho builder/critic ghi tên file tham chiếu cần đọc (`.ai/ref/<file>` tuyệt đối) — KHÔNG dán nội dung.
+
 ## Vòng một việc
-1. Lấy việc kế trong STATE (`[ ]` đầu tiên, không bị `[!]`). Việc >4 giờ → tách nhỏ trong STATE trước.
-2. **Tự làm hay giao?** Theo luật "KHÔNG spawn khi" trong CLAUDE.md. Việc nhỏ → tự làm, vẫn theo Luật code.
-3. **Giao builder**: brief đủ 6 trường; VÀO = file liên quan + tiêu chí chấp nhận. Song song/rủi ro → `isolation: "worktree"`. Sửa tiếp theo review → SendMessage cùng builder.
-4. **critic CHẾ ĐỘ code** (spawn mới) khi: diff >30 dòng, đụng auth/thanh toán/dữ liệu/bảo mật, hoặc đổi interface dùng chung. `BLOCK` → builder sửa → critic mới. Tối đa 2 lượt, quá → bạn tự đọc và quyết.
-5. **Kiểm chứng tự mình**: chạy lệnh test toàn bộ (hoặc grunt chạy) — không tin "OK" suông.
-6. Merge worktree/nhánh vào nhánh chính tại máy. Push/PR/deploy → hỏi user.
-7. STATE: tick việc, 1 dòng nhật ký, chi phí. Gotcha builder đề xuất mà sẽ lặp lại → thêm vào CLAUDE.md.
+1. **Lấy việc** kế trong STATE (`[ ]` đầu tiên, không `[!]`). Hết việc của mốc → mở mốc mới theo `moc.md` (S: ghi thẳng vào STATE). Việc không vừa 1 lượt builder → tách nhỏ.
+2. **Phân loại → nhánh/commit**: `fix/` `feature/` `test/` `refactor/` `perf/` `security/` + `<id>_<mô_tả>`; commit `<loai>/<id>: <mô tả>`. S: làm trên nhánh chính · M+: nhánh hoặc worktree mang tên đó. Ghi `base=<hash HEAD>` vào dòng "Đang chạy".
+3. **Tự làm hay giao?** Luật "KHÔNG spawn khi" trong CLAUDE.md. Tự làm vẫn theo đủ luật + cổng của `sp:builder`.
+4. **Giao builder**: brief 6 trường; VÀO = việc + tiêu chí chấp nhận + module liên quan (từ MAP.md) + tham chiếu cần đọc; LOẠI TRỪ = file agent khác đang giữ. Dựng scaffold → thêm `PHẠM VI: <n>`. Song song/rủi ro → `isolation: "worktree"`.
+   `PHẠM VI VƯỢT` → bạn quyết (tách việc / nới brief) rồi SendMessage. Báo cáo thiếu nhãn (NHÁNH/TEST/TÁI DÙNG/LIÊN KẾT/PHẠM VI/CHECK/MAP/GOTCHA-NỢ; L: REUSE-DOCS) → SendMessage bắt bổ sung.
+5. **grunt QUÉT** trên `<base>..HEAD` → **critic CHẾ ĐỘ code** (spawn mới; VÀO = diff + báo cáo builder + file quét) khi: diff >30 dòng, đổi module/cấu trúc, đụng auth/thanh toán/dữ liệu/bảo mật, hoặc đổi interface dùng chung. QUÉT có vi phạm mà không cần critic → SendMessage builder sửa. `BLOCK` → builder sửa → critic MỚI; tối đa 2 lượt, quá → bạn tự đọc và quyết.
+6. **Tự kiểm chứng**: chạy test toàn bộ (+ `run --check` nếu có). Không tin "OK" suông.
+7. **Merge** worktree/nhánh vào nhánh chính tại máy, xóa worktree/nhánh đã merge. Push/PR/deploy → hỏi user.
+8. **Cập nhật** (gộp 1 lần ghi, chỉ bạn ghi): STATE tick + nhật ký + chi phí · `git diff --name-status <base>..HEAD | grep -E '^[ADR]'` có kết quả và quy mô ≥M → grunt MAP, rồi chép dòng `MAP:` của builder vào `.ai/MAP.md` (S: vào CLAUDE.md Cấu trúc) · [L] dòng REUSE → `.ai/reuse.md` · GOTCHA lặp lại → CLAUDE.md Gotchas · quyết định đắt → CLAUDE.md Quyết định (+ `docs/quyet_dinh/` ở L) · NỢ → `.ai/no_ky_thuat.md` (`mô tả | mức | ngày | file`). Không refactor "tiện tay".
 
-## Kiến trúc (mặc định, đổi được nếu có lý do ghi vào CLAUDE.md)
-Một lệnh chạy ở root (ghi trong CLAUDE.md). Luồng phụ thuộc một chiều: entry → điều phối (facade/handler) → logic (service, mỗi cái 1 việc, không import lẫn nhau) → dữ liệu/tiện ích. Script nhỏ/CLI/thư viện → cấu trúc chuẩn của hệ sinh thái, không ép tầng.
+## Bộ nhớ codebase theo quy mô (bảng + ngưỡng: `kien_truc.md`)
+S: CLAUDE.md mục Cấu trúc đủ (≤8 dòng vai trò) · M: + `.ai/MAP.md` (đọc đầu phiên) + `.ai/MAP.auto.md` (sinh bằng lệnh, đọc khi cần) + `.ai/brief.md` + `.ai/ke_hoach.md` + `.ai/no_ky_thuat.md` · L: + `docs/kien_truc.md`, `docs/contracts/`, `docs/quyet_dinh/`, `.ai/reuse.md`.
+`.ai/brief.md` (≤40 dòng: mục tiêu · trong/NGOÀI phạm vi · tiêu chí hoàn thành · module chính · rủi ro) — bạn viết khi khởi tạo/lên M, cập nhật khi mở mốc (thay nội dung, không chồng lịch sử — lịch sử ở ke_hoach.md); critic ke_hoach đọc nó.
+Tăng bậc quy mô (bao-tri phát hiện) → bạn tạo file của bậc mới: brief từ STATE + ke_hoach, MAP qua grunt MAP.
 
-## TRIỂN KHAI (từ nghiên cứu)
-- Nguồn sự thật = `SPEC.md` + `tests/acceptance/`. Việc đầu tiên: acceptance test chạy trên code chính thức (tái lập kết quả nghiên cứu, sai lệch nằm trong ngưỡng ghi ở SPEC).
-- Code thí nghiệm KHÔNG copy nguyên vào sản phẩm — viết lại sạch theo Luật code. Sản phẩm không được import từ `thi_nghiem/`; giữ nguyên `thi_nghiem/` mà `cmd` trong sổ cái trỏ tới (bằng chứng tái lập), chỉ xóa phần không ai trỏ.
-- Giả định của SPEC sai khi triển khai → KHÔNG vá vòng: spike (dưới).
-
-## Spike (rủi ro chưa rõ trong XÂY DỰNG/TRIỂN KHAI)
-Ghi giả thuyết vào `.ai/so_cai.md` (tạo file nếu chưa có), làm theo mục Spike của `sp:nghien-cuu`, kết quả 1 dòng Gotchas. Không đổi chế độ cả dự án trừ khi spike sụp.
-
-## Debug
-1. critic CHẾ ĐỘ loi (spawn mới) → Tầng / Nguyên nhân gốc / Bằng chứng / Fix.
-2. builder: test tái hiện (đỏ) → fix đúng gốc + mọi chỗ cùng lỗi → toàn bộ test xanh.
-3. Lỗi loại sẽ lặp lại → 1 dòng Gotchas. Sau 2 lượt fix thất bại → dừng, báo user: tầng, đã thử gì, giả thuyết.
-
-## Dự án lớn (tùy chọn)
-Việc >10 hoặc nhiều mốc → `.ai/ke_hoach.md` (mốc → việc, có NGOÀI phạm vi cho mỗi mốc); STATE chỉ giữ mốc hiện tại. Không tạo tài liệu kiến trúc riêng — codegraph/CLAUDE.md đủ; cần sơ đồ thì gọi `sp:bao-tri`.
-
-## Mẫu /goal (giám khảo đọc transcript → bằng chứng IN RA MÀN HÌNH; luôn có trần, in `Vòng k/N`)
-- Cụm việc: `/goal Đã in mục Việc của .ai/STATE.md cho thấy mọi việc của mốc hiện tại là [x]; lệnh test trong CLAUDE.md chạy ở cuối với output in ra toàn bộ pass; critic code cho diff lớn nhất trả PASS hoặc chỉ WARN; đã in dòng Tiếp theo của STATE. Tối đa 15 vòng việc (in Vòng k/15).`
-- Debug: `/goal Có test tái hiện lỗi <X> với output đỏ in ra trước khi sửa và xanh in ra sau khi sửa; toàn bộ test pass (output in ra); nguyên nhân gốc ghi trong STATE. Tối đa 4 lượt fix (in Lượt k/4), quá thì dừng báo user.`
-- Triển khai: `/goal tests/acceptance chạy xanh trên code chính thức (output in ra); đã in kết quả grep -rn "thi_nghiem" <thư mục src> rỗng; lệnh chạy ở root khởi động không lỗi (output in ra). Tối đa 12 vòng việc.`
+## Chế độ khác
+TRIỂN KHAI hoặc rủi ro chưa rõ (spike) → đọc `trien_khai.md`. Debug → `bugfix.md` (critic CHẾ ĐỘ loi bước 1–4 → builder 5–7). Đề xuất `/goal` → `goal.md`.

@@ -45,12 +45,11 @@ Mỗi `/goal` = một cụm vòng có trần. Hết `/goal` → báo user ≤8 d
 Đủ khi: có ≥1 giả thuyết `blk` và mọi rủi ro chặn đường đã có giả thuyết `blk` · mọi `blk` confirmed (hoặc parked kèm phương án thay thế đã confirmed) · mỗi confirmed có `cmd` chạy được · critic đã chạy trên kết luận tổng. Khi đủ:
 1. `SPEC.md` ≤80 dòng: mỗi yêu cầu trỏ id (vd "dùng X vì H7/E12"), ghi ngưỡng + dung sai.
 2. Thí nghiệm quyết định → `tests/acceptance/` (test hồi quy đầu tiên).
-3. Đổi Chế độ trong STATE + CLAUDE.md → TRIỂN KHAI, gọi `sp:xay-dung`.
+3. Chọn kiến trúc + quy mô theo `.ai/ref/kien_truc.md`, điền CLAUDE.md mục Cấu trúc + `Quy mô:`.
+4. Đổi Chế độ trong STATE + CLAUDE.md → TRIỂN KHAI, gọi `sp:xay-dung` (đọc `.ai/ref/trien_khai.md`).
 
-## Mẫu /goal (giám khảo đọc transcript → yêu cầu bằng chứng IN RA MÀN HÌNH; luôn có trần, in `Vòng k/N`)
-- Một giả thuyết: `/goal Đã in ra kết quả grep "H7 |" .ai/so_cai.md có dòng V (confirmed/refuted/parked); nếu confirmed thì cmd của E tương ứng đã chạy lại trong phiên và output in ra đạt ngưỡng; critic gia_thuyet đã trả KẾT cho H7; đã in wc -l .ai/findings.md ≤60. Tối đa 6 vòng (in Vòng k/6), tới vòng 6 chưa xong thì ghi V parked kèm lý do và dừng.`
-- Khảo sát hướng: `/goal .ai/runs/INDEX.md có ≥3 run scout theo 3 góc khác nhau cho câu hỏi Q (in các dòng đó); findings.md có ≥3 giả thuyết mới đủ kill+test (in ra); đã gửi user báo cáo hướng tiếp. Tối đa 3 vòng spawn.`
-- Chạy tới cổng: `/goal Cổng triển khai = đủ: đã in kết quả grep "^H" .ai/so_cai.md | grep -vc "kill:" bằng 0; mọi blk có dòng V confirmed (in grep); cmd của chúng đã chạy lại trong phiên với output in ra (cmd >10 phút → in log lần chạy gần nhất trong runs/); SPEC.md tồn tại; tests/acceptance chạy xanh (output in ra). Tối đa 10 vòng; 2 vòng liên tiếp không có dòng V mới → dừng, báo user.`
+## Mẫu /goal
+Đọc `.ai/ref/goal_nghien_cuu.md` khi đề xuất `/goal` (giám khảo đọc transcript → bằng chứng in ra màn hình + trần vòng).
 
 ## Spike (gọi từ sp:xay-dung)
-1 giả thuyết `blk` + kill, tối đa 1 vòng trên. confirmed → build tiếp. refuted → dừng build, báo user đề xuất chuyển sang NGHIÊN CỨU cho phần đó (user quyết). parked → build tiếp bằng phương án an toàn nếu có, ghi `[!]` trong STATE và báo user.
+Xem `.ai/ref/trien_khai.md` mục Spike.
