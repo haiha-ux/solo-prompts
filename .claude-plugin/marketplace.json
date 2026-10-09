@@ -1,0 +1,12 @@
+{
+  "name": "solo-prompts",
+  "description": "Bộ prompt cá nhân cho solo dev: điều phối đa tác tử, nghiên cứu, build, /goal.",
+  "owner": { "name": "haiha" },
+  "plugins": [
+    {
+      "name": "sp",
+      "source": "./",
+      "description": "Solo Prompts v4 — Opus điều phối agent sonnet/haiku; NGHIÊN CỨU / XÂY DỰNG / TRIỂN KHAI; /goal."
+    }
+  ]
+}
