@@ -26,9 +26,9 @@ du_an/
 ├── _spike/           ← thử nhanh, xóa sau khi xong
 ├── docs/             kien_truc.md · contracts/ · quyet_dinh/   (L)
 ├── .ai/              STATE.md · MAP.md · MAP.auto.md · brief.md · ke_hoach.md · no_ky_thuat.md · reuse.md
-│                     findings.md · so_cai.md · runs/ · ref/ (bản sao tham chiếu của plugin)
+│                     findings.md · so_cai.md · runs/ · ref/ (bản sao tham chiếu của plugin — hook đồng bộ, KHÔNG commit: thêm `.ai/ref/` vào .gitignore)
 ├── CLAUDE.md · .env.example · requirements.txt|package.json|go.mod
-└── .gitignore        ← .env · .venv/ · node_modules/ · __pycache__/ · dist/ · build/ · .codegraph/ · .ai/chi_phi.log
+└── .gitignore        ← `.env` · `.venv/` · `node_modules/` · `__pycache__/` · `dist/` · `build/` · `.codegraph/` · `.ai/chi_phi.log` · `.ai/runs/*-grunt-*.md` (log thô; run của scout/critic VẪN commit vì là bằng chứng); .gitattributes: `* text=auto eol=lf`
 ~~~
 Microservices: mỗi service 1 repo/container cùng khung; API client NẰM TRONG facade (code gọi facade không biết bên dưới là import hay mạng) + retry/timeout/circuit breaker ở đó. Chỉ chọn khi quy mô L và cần scale/deploy riêng.
 

@@ -27,7 +27,9 @@ V | H7 | confirmed|refuted|parked | <lý do 1 câu> | <bằng chứng: E12, runs
 
 ## Một vòng
 1. **Đóng khung** (tự làm): từ Hướng tiếp/Rủi ro → 1–5 giả thuyết có `kill` + `test`. Trước khi ghi: grep từ khóa trong sổ cái — trùng hướng đã refuted thì phải nêu lý do mới.
-2. **Thu thập** (scout, chạy nền, ≤3 con, chia theo GÓC không trùng): (a) nguồn gốc: paper/docs/spec, (b) thực chiến: benchmark/GitHub issue/repo, (c) phản bác: ai nói nó KHÔNG chạy, giới hạn đã biết. Mỗi brief ≤4–6 search. Đã có run trả lời trong `runs/INDEX.md` → không spawn.
+2. **Thu thập — 2 pha** (scout, chạy nền, chia theo GÓC không trùng; đã có run còn hạn trong `runs/INDEX.md` → không spawn):
+   Pha 1 (≤3 scout, ≤6 search/con): (a) nguồn gốc: paper/docs/spec · (b) thực chiến: benchmark/GitHub issue/repo · (c) phản bác: ai nói nó KHÔNG chạy, giới hạn đã biết. Mỗi scout trả thêm `THUẬT NGỮ MỚI` + `THEO DẤU`.
+   Pha 2 (CHỈ cho giả thuyết `blk` hoặc khẳng định tính mới; 1–2 scout, ≤6 search/con): truy vấn bằng thuật ngữ mới + đi theo trích dẫn (arXiv cited-by, GitHub used-by/issues), tìm paper/repo GỐC thay vì blog, tìm repo cùng ý tưởng theo mô tả hành vi. Dừng khi 2 truy vấn liên tiếp không thêm nguồn tier A/B mới. Trần: ≤5 scout cho 1 giả thuyết `blk`.
 3. **Thí nghiệm** (khi `test` cần số đo): builder dựng trong worktree, `thi_nghiem/E<n>/` có 1 lệnh chạy, cố định seed. merge `thi_nghiem/E<n>/` về nhánh chính TRƯỚC khi ghi dòng `E` (cmd phải chạy được từ cây chính). grunt chạy lặp/quét tham số, trả về sẵn nội dung dòng `E`. Kết quả gần ngưỡng → CHẠY LẠI cùng thí nghiệm ≥3 lần (vẫn là 1 E, ghi dao động).
 4. **Phản biện** (critic CHẾ ĐỘ gia_thuyet, spawn MỚI, không đưa lập luận của bạn): giả thuyết sắp chốt/bác bỏ, gộp ≤3 cái cùng chủ đề vào 1 critic. `KẾT: sụp` → không được confirmed.
 5. **Phán quyết** (tự làm; đang là luồng phụ → tăng `vòng k/3` ở dòng `Luồng phụ` của STATE, k=3 → đóng theo `sp:chuyen`): nguồn tier A quyết định kết luận → tự mở kiểm (tier do haiku gán, có thể sai). Ghi dòng V, cập nhật findings.md, kết quả bất ngờ → giả thuyết con. 1 dòng STATE.

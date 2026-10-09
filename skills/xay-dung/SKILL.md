@@ -4,16 +4,17 @@ description: "Vòng xây dựng / triển khai (từ SPEC.md) / debug / mở m�
 ---
 # Xây dựng — điều phối viên đọc 1 lần mỗi phiên (đọc lại sau khi context bị nén)
 
-## Tham chiếu: `.ai/ref/` của project (thiếu → `mkdir -p .ai/ref && cp "${CLAUDE_PLUGIN_ROOT}"/skills/*/tham-chieu/*.md .ai/ref/`)
+## Tham chiếu: `.ai/ref/` của project (thiếu → `node "${CLAUDE_PLUGIN_ROOT}/hooks/probe.js" --sync`)
 `kien_truc.md` 4 tầng, luật luồng, bố cục thư mục, quy mô → file quản lý, MAP, debug theo tầng · `run_file.md` run file root + startup/ · `bugfix.md` sửa lỗi 7 bước · `moc.md` mở mốc, ảnh hưởng, scope check, contracts, ADR · `trien_khai.md` TRIỂN KHAI + spike · `goal.md` mẫu /goal.
 Brief cho builder/critic ghi tên file tham chiếu cần đọc (`.ai/ref/<file>` tuyệt đối) — KHÔNG dán nội dung.
 
 ## Vòng một việc
 1. **Lấy việc** kế trong STATE (`[ ]` đầu tiên, không `[!]`; có luồng phụ → xen việc `[NC:…]` qua `sp:nghien-cuu`, ≤3 vòng). Hết việc của mốc → mở mốc mới theo `moc.md` (S: ghi thẳng vào STATE). Việc không vừa 1 lượt builder → tách nhỏ.
 2. **Phân loại → nhánh/commit**: `fix/` `feature/` `test/` `refactor/` `perf/` `security/` + `<id>_<mô_tả>`; commit `<loai>/<id>: <mô tả>`. S: làm trên nhánh chính · M+: nhánh hoặc worktree mang tên đó. Ghi `base=<hash HEAD>` vào dòng "Đang chạy".
-3. **Tự làm hay giao?** Luật "KHÔNG spawn khi" trong CLAUDE.md. Tự làm vẫn theo đủ luật + cổng của `sp:builder`.
+3. **Tự làm hay giao?** Luật SPAWN trong CLAUDE.md. Tự làm vẫn theo đủ luật + cổng của `sp:builder`.
 4. **Giao builder**: brief 6 trường; VÀO = việc + tiêu chí chấp nhận + module liên quan (từ MAP.md) + tham chiếu cần đọc; LOẠI TRỪ = file agent khác đang giữ. Dựng scaffold → thêm `PHẠM VI: <n>`. Song song/rủi ro → `isolation: "worktree"`.
-   `PHẠM VI VƯỢT` → bạn quyết (tách việc / nới brief) rồi SendMessage. Báo cáo thiếu nhãn (NHÁNH/TEST/TÁI DÙNG/LIÊN KẾT/PHẠM VI/CHECK/MAP/GOTCHA-NỢ/CHẶN; L: REUSE-DOCS) → SendMessage bắt bổ sung.
+   Brief có dòng TRA CỨU: việc dùng thư viện/API chưa có trong CLAUDE.md Phiên bản → spawn scout TRƯỚC (song song việc khác), ghi kết quả vào Phiên bản rồi mới giao builder.
+   `PHẠM VI VƯỢT` → bạn quyết (tách việc / nới brief) rồi SendMessage. `CHẶN: CẦN TRA CỨU` → scout rồi SendMessage builder đường dẫn run. `CHẶN: CẦN GRUNT` → tự chạy lệnh nếu ngắn, không thì grunt. Báo cáo thiếu nhãn (NHÁNH/TEST/TÁI DÙNG/LIÊN KẾT/PHẠM VI/CHECK/MAP/GOTCHA-NỢ/CHẶN; L: REUSE-DOCS) → SendMessage bắt bổ sung.
 5. **grunt QUÉT** trên `<base>..HEAD` → **critic CHẾ ĐỘ code** (spawn mới; VÀO = diff + báo cáo builder + file quét) khi: diff >30 dòng, đổi module/cấu trúc, đụng auth/thanh toán/dữ liệu/bảo mật, hoặc đổi interface dùng chung. QUÉT có vi phạm mà không cần critic → SendMessage builder sửa. `BLOCK` → builder sửa → critic MỚI; tối đa 2 lượt, quá → bạn tự đọc và quyết.
 6. **Tự kiểm chứng**: chạy test toàn bộ (+ `run --check` nếu có). Không tin "OK" suông.
 7. **Merge** worktree/nhánh vào nhánh chính tại máy, xóa worktree/nhánh đã merge. Push/PR/deploy → hỏi user.

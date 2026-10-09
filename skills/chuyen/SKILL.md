@@ -1,9 +1,9 @@
 ---
 name: chuyen
-description: "Chuyển chế độ dự án (NGHIÊN CỨU / XÂY DỰNG / TRIỂN KHAI) hoặc mở/đóng luồng phụ nghiên cứu, kèm bàn giao + dựng phần còn thiếu. Dùng khi user nói chuyển/đổi hướng (vd 'chuyển sang build', 'nghiên cứu lại X'), khi khoi-tao/tiep-tuc cần, khi cổng nghiên cứu đủ, hoặc khi thiếu file của chế độ đang chạy."
+description: "Chuyển chế độ NC/XD/TK hoặc mở/đóng luồng phụ nghiên cứu, kèm bàn giao + dựng phần thiếu. Dùng khi user đổi hướng (vd chuyển sang build, nghiên cứu lại X) hoặc skill khác cần."
 ---
 # Chuyển chế độ — 1 giao dịch, không sửa tay dòng `Chế độ:`
-Cú pháp: `sp:chuyen <NC|XD|TK> [phạm vi:<thành phần>] [lý do]` hoặc câu tự nhiên. Đích chưa rõ → `.ai/ref/phan_loai.md` (thiếu `.ai/ref/` → `mkdir -p .ai/ref && cp "${CLAUDE_PLUGIN_ROOT}"/skills/*/tham-chieu/*.md .ai/ref/`).
+Cú pháp: `sp:chuyen <NC|XD|TK> [phạm vi:<thành phần>] [lý do]` hoặc câu tự nhiên. Đích chưa rõ → `.ai/ref/phan_loai.md` (thiếu `.ai/ref/` → `node "${CLAUDE_PLUGIN_ROOT}/hooks/probe.js" --sync`).
 - **Chuyển chính**: đổi chế độ chính. Chưa có chế độ chính (khởi tạo) → luôn là chuyển chính.
 - **Luồng phụ**: CHỈ NC, CHỈ khi có `phạm vi:` và đã có chế độ chính XD/TK. Tối đa 1 luồng phụ; đã có mà mở thêm → hỏi user đóng cái nào.
 - `ĐẢM BẢO <chế độ>` (không đổi chế độ): chỉ chạy mục ĐẢM BẢO — dùng khi tiep-tuc thấy thiếu file.
@@ -27,7 +27,7 @@ Cú pháp: `sp:chuyen <NC|XD|TK> [phạm vi:<thành phần>] [lý do]` hoặc c�
 | Đóng luồng phụ | confirmed → hợp nhất vào SPEC/brief, gỡ thẻ `[NC:…]` và `[!] chờ H` · refuted → báo user, đề xuất chuyển chính sang NC · parked/hết 3 vòng → phương án an toàn + giữ `[!]`, báo user | Ghi V trong so_cai trước khi đóng; xóa dòng `Luồng phụ` |
 
 ## ĐẢM BẢO theo chế độ
-**Mọi chế độ:** `.ai/ref/` · `.ai/runs/INDEX.md` · git + `.gitignore` nền (`.env`, `.venv/`, `node_modules/`, `__pycache__/`, `dist/`, `build/`, `.codegraph/`, `.ai/chi_phi.log`).
+**Mọi chế độ:** `.ai/ref/` · `.ai/runs/INDEX.md` · git + `.gitignore`/`.gitattributes` theo `.ai/ref/kien_truc.md` (Bố cục chuẩn).
 **NC (chính):** `.ai/findings.md` + `.ai/so_cai.md` (khuôn trong `sp:nghien-cuu`), câu hỏi gốc + "Rủi ro chặn đường" từ yêu cầu. CLAUDE.md: `Quy mô: S (tạm)`, mục Cấu trúc ghi "chưa chốt — làm khi chuyển XD/TK".
 **NC (luồng phụ):** như trên nếu thiếu file; thêm vào findings mục `## Luồng phụ <phạm vi>: <câu hỏi>` (tạo mới dù findings đã có).
 **XD:**
