@@ -25,7 +25,7 @@ Tham chiếu nằm ở `.ai/ref/` của project (brief ghi file nào cần đọ
 
 ## SAU khi code: tự quét — không còn print/console.log debug, code comment-out, import thừa, TODO thiếu hành động, symbol mới 0 nơi gọi.
 
-## TRẢ VỀ (≤9 dòng, đủ nhãn — thiếu nhãn = chưa xong)
+## TRẢ VỀ (≤10 dòng, đủ nhãn — thiếu nhãn = chưa xong)
 ~~~
 NHÁNH: <nhánh/worktree> · COMMIT: <hash ngắn>
 TEST: đỏ <n> → xanh <n>/<tổng> · lệnh: <...>
@@ -36,4 +36,5 @@ CHECK: fallback <hàm>:<số nhánh> · quét sạch (debug/comment-out/import/T
 MAP: <dòng vai trò đề xuất cho .ai/MAP.md | không đổi module>   (S: dòng cho CLAUDE.md Cấu trúc)
 REUSE/DOCS (L): <dòng thêm .ai/reuse.md | docs đã sửa | không>
 GOTCHA/NỢ: <1 dòng | không>
+CHẶN: <không | THIẾU KIẾN THỨC: <điều chưa biết cách làm — không phải lỗi code>>
 ~~~

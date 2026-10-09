@@ -5,6 +5,6 @@
 - Code thí nghiệm KHÔNG copy nguyên — viết lại sạch theo kiến trúc. Sản phẩm không import từ `thi_nghiem/`; giữ `thi_nghiem/` mà `cmd` trong sổ cái trỏ tới (bằng chứng tái lập), chỉ xóa phần không ai trỏ.
 - Giả định SPEC sai khi triển khai → KHÔNG vá vòng: spike (dưới).
 
-## Spike (rủi ro chưa rõ trong XÂY DỰNG/TRIỂN KHAI)
-Ghi giả thuyết vào `.ai/so_cai.md` (tạo nếu chưa có; khuôn trong skill `sp:nghien-cuu`), 1 giả thuyết `blk` + kill, tối đa 1 vòng nghiên cứu, code thử trong `_spike/` (xóa sau). Kết quả 1 dòng Gotchas.
-confirmed → build tiếp · refuted → dừng build, báo user đề xuất chuyển phần đó sang NGHIÊN CỨU (user quyết) · parked → build tiếp bằng phương án an toàn nếu có, ghi `[!]` trong STATE và báo user.
+## Spike = luồng phụ NC
+Rủi ro chưa rõ trong XD/TK → `sp:chuyen NC phạm vi:<thành phần>`: giả thuyết `blk` + kill vào so_cai, ≤3 vòng, thí nghiệm trong `thi_nghiem/E<n>/` (`_spike/` chỉ cho thử bỏ đi), việc build phụ thuộc → `[!] chờ H<n>`, việc khác chạy tiếp.
+confirmed → đóng luồng phụ, build tiếp · refuted → báo user, đề xuất chuyển chính sang NC (user quyết) · parked → phương án an toàn nếu có, giữ `[!]`, báo user.

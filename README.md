@@ -24,6 +24,7 @@ Nên cho phép sẵn quyền cho agent chạy nền (`/permissions`: `WebSearch`
 | Phiên mới của dự án cũ | `/sp:tiep-tuc` |
 | Vòng lặp dài (nghiên cứu / cụm việc / debug) | `/goal <điều kiện>` — agent đề xuất sẵn câu `/goal` cuối mỗi cụm |
 | Sau mỗi mốc / thấy rối | `/sp:bao-tri` |
+| Đổi hướng bất kỳ lúc nào | `/sp:chuyen <NC\|XD\|TK> [phạm vi:<thành phần>] [lý do]` — hoặc nói tự nhiên ("chuyển sang build", "nghiên cứu lại phần X"), hoặc `/sp:tiep-tuc chuyển sang triển khai` |
 
 ## Agent tự phân loại 3 chế độ
 | Chế độ | Khi nào | Luồng |
@@ -32,6 +33,13 @@ Nên cho phép sẵn quyền cho agent chạy nền (`/permissions`: `WebSearch`
 | **XÂY DỰNG** | Viết được ≥3 tiêu chí chấp nhận, mọi phần đã biết cách làm | việc → builder (TDD) → critic code → test toàn bộ → STATE |
 | **TRIỂN KHAI** | Nghiên cứu đã chốt, có cách tái lập | `SPEC.md` + `tests/acceptance/` từ thí nghiệm → build sạch lại |
 Phân vân → NGHIÊN CỨU khảo sát ngắn (sai hướng build đắt hơn). Gặp giả định sai giữa chừng → spike 1 vòng; sụp thì agent đề xuất chuyển phần đó về NGHIÊN CỨU, bạn quyết.
+
+## Đổi hướng (không bị "dính" chế độ khởi tạo)
+- Chế độ là **chế độ chính** của dự án, đổi bằng giao dịch `sp:chuyen`: bàn giao artifact (findings → brief/SPEC, test fail → giả thuyết) + **dựng lười** phần còn thiếu (kiểm bằng `ls`, không dựa chế độ cũ) + ghi nhật ký chuyển. `khoi-tao` cũng chỉ là "chuyển từ mới → X", nên khởi tạo và chuyển dùng chung 1 nguồn.
+- **Luồng phụ** (tối đa 1, chỉ NC): `sp:chuyen NC phạm vi:<thành phần>` — nghiên cứu 1 thành phần ≤3 vòng trong khi build phần còn lại; việc gắn thẻ `[NC:…]`, việc phụ thuộc chờ `[!]`.
+- **Chuyển sớm** (vd build/triển khai khi nghiên cứu chưa qua cổng) vẫn được — hệ thống ghi "Giả định chưa kiểm" trỏ H#, code phụ thuộc nằm sau interface + test xfail.
+- Gọi lại `/sp:khoi-tao <yêu cầu mới>` trên dự án có sẵn: không ghi đè, cùng chế độ thì thêm việc, khác chế độ thì `sp:chuyen`.
+- Agent tự ĐỀ XUẤT chuyển khi: cổng NC đủ · việc bị chặn 2 lần vì điều chưa biết · spike sụp · luồng phụ quá 3 vòng.
 
 ## Phân vai
 | Vai | Model | Làm | Trả về |

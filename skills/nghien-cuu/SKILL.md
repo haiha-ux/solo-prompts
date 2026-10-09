@@ -19,7 +19,7 @@ Chạm 60 dòng → gộp Đường chết/Đã chốt cũ thành cụm theo ch�
 
 **`so_cai.md`** — sổ cái append-only, KHÔNG đọc cả file. Tra đúng id: `grep "H7 |" .ai/so_cai.md` (dấu ` |` để H7 không khớp H70). Tra theo nội dung: `grep -i "<từ khóa>"`.
 ```
-H7 | <giả thuyết đo được> | kill: <điều kiện bác bỏ, viết TRƯỚC khi thử> | test: <cách kiểm, ngưỡng, dung sai> | blk
+H7 | <giả thuyết đo được> | kill: <điều kiện bác bỏ, viết TRƯỚC khi thử> | test: <cách kiểm, ngưỡng, dung sai> | blk | scope:<thành phần — chỉ khi thuộc luồng phụ>
 E12 | H7 | <setup: commit, tham số, seed> | <kết quả số ± dao động qua các lần chạy lại> | cmd: <lệnh tái lập> | runs/<file>
 V | H7 | confirmed|refuted|parked | <lý do 1 câu> | <bằng chứng: E12, runs/<file>#S3>
 ```
@@ -30,7 +30,7 @@ V | H7 | confirmed|refuted|parked | <lý do 1 câu> | <bằng chứng: E12, runs
 2. **Thu thập** (scout, chạy nền, ≤3 con, chia theo GÓC không trùng): (a) nguồn gốc: paper/docs/spec, (b) thực chiến: benchmark/GitHub issue/repo, (c) phản bác: ai nói nó KHÔNG chạy, giới hạn đã biết. Mỗi brief ≤4–6 search. Đã có run trả lời trong `runs/INDEX.md` → không spawn.
 3. **Thí nghiệm** (khi `test` cần số đo): builder dựng trong worktree, `thi_nghiem/E<n>/` có 1 lệnh chạy, cố định seed. merge `thi_nghiem/E<n>/` về nhánh chính TRƯỚC khi ghi dòng `E` (cmd phải chạy được từ cây chính). grunt chạy lặp/quét tham số, trả về sẵn nội dung dòng `E`. Kết quả gần ngưỡng → CHẠY LẠI cùng thí nghiệm ≥3 lần (vẫn là 1 E, ghi dao động).
 4. **Phản biện** (critic CHẾ ĐỘ gia_thuyet, spawn MỚI, không đưa lập luận của bạn): giả thuyết sắp chốt/bác bỏ, gộp ≤3 cái cùng chủ đề vào 1 critic. `KẾT: sụp` → không được confirmed.
-5. **Phán quyết** (tự làm): nguồn tier A quyết định kết luận → tự mở kiểm (tier do haiku gán, có thể sai). Ghi dòng V, cập nhật findings.md, kết quả bất ngờ → giả thuyết con. 1 dòng STATE.
+5. **Phán quyết** (tự làm; đang là luồng phụ → tăng `vòng k/3` ở dòng `Luồng phụ` của STATE, k=3 → đóng theo `sp:chuyen`): nguồn tier A quyết định kết luận → tự mở kiểm (tier do haiku gán, có thể sai). Ghi dòng V, cập nhật findings.md, kết quả bất ngờ → giả thuyết con. 1 dòng STATE.
 
 ## Luật phán quyết (cố định trước khi xem kết quả)
 - **confirmed**: đạt `test` trong dung sai bằng `cmd` chạy lại được — hoặc, với khẳng định không thí nghiệm được: ≥1 nguồn tier A hoặc ≥2 tier B độc lập (khác tác giả, không trích lại nhau); VÀ critic không `sụp`.
@@ -42,14 +42,10 @@ V | H7 | confirmed|refuted|parked | <lý do 1 câu> | <bằng chứng: E12, runs
 Mỗi `/goal` = một cụm vòng có trần. Hết `/goal` → báo user ≤8 dòng: số H open / đã đóng / hướng chết, đã chốt gì, chết gì, 2–3 hướng tiếp + đề xuất 1, kèm câu `/goal` cho hướng đó. User chọn hướng — con người phán "tiến triển thật hay chỉ bận rộn".
 
 ## Cổng NGHIÊN CỨU → TRIỂN KHAI
-Đủ khi: có ≥1 giả thuyết `blk` và mọi rủi ro chặn đường đã có giả thuyết `blk` · mọi `blk` confirmed (hoặc parked kèm phương án thay thế đã confirmed) · mỗi confirmed có `cmd` chạy được · critic đã chạy trên kết luận tổng. Khi đủ:
-1. `SPEC.md` ≤80 dòng: mỗi yêu cầu trỏ id (vd "dùng X vì H7/E12"), ghi ngưỡng + dung sai.
-2. Thí nghiệm quyết định → `tests/acceptance/` (test hồi quy đầu tiên).
-3. Chọn kiến trúc + quy mô theo `.ai/ref/kien_truc.md`, điền CLAUDE.md mục Cấu trúc + `Quy mô:`.
-4. Đổi Chế độ trong STATE + CLAUDE.md → TRIỂN KHAI, gọi `sp:xay-dung` (đọc `.ai/ref/trien_khai.md`).
+Đủ khi (luồng phụ: chỉ xét `blk` thuộc phạm vi đó): có ≥1 giả thuyết `blk` và mọi rủi ro chặn đường đã có giả thuyết `blk` · mọi `blk` confirmed (hoặc parked kèm phương án thay thế đã confirmed) · mỗi confirmed có `cmd` chạy được · critic đã chạy trên kết luận tổng. Khi đủ → kết thúc `/goal` hiện tại, đề xuất user `sp:chuyen TK` — nó viết SPEC trỏ id, chuyển thí nghiệm quyết định thành `tests/acceptance/`, chọn kiến trúc + quy mô, dựng scaffold. Luồng phụ đủ cổng → đóng luồng phụ (hợp nhất vào SPEC/brief). User muốn build/triển khai TRƯỚC khi đủ cổng → vẫn `sp:chuyen`, nó ghi "Giả định chưa kiểm".
 
 ## Mẫu /goal
 Đọc `.ai/ref/goal_nghien_cuu.md` khi đề xuất `/goal` (giám khảo đọc transcript → bằng chứng in ra màn hình + trần vòng).
 
-## Spike (gọi từ sp:xay-dung)
-Xem `.ai/ref/trien_khai.md` mục Spike.
+## Spike / luồng phụ NC (từ XD/TK)
+Mở bằng `sp:chuyen NC phạm vi:<thành phần>`: ≤3 vòng chỉ cho thành phần đó, rồi phán quyết và đóng luồng phụ (bảng trong `sp:chuyen`).
