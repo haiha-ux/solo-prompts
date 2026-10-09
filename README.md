@@ -1,9 +1,9 @@
 # Bộ Prompt Solo v4 — Điều phối đa tác tử · Nghiên cứu · /goal
 
-> Thiết kế qua 3 vòng tranh luận của các agent Sonnet (skills-first × phương pháp nghiên cứu × kinh tế token) + 1 vòng red-team độc lập. Thay thế v3.1 (các file `.md` ở thư mục cha, giữ lại để tham khảo).
+> Plugin Claude Code cho solo dev người Việt: Opus điều phối agent Sonnet/Haiku, 3 chế độ NGHIÊN CỨU / XÂY DỰNG / TRIỂN KHAI chuyển qua lại tự do, vòng lặp `/goal`, tiết kiệm token. Giấy phép MIT.
 
 ## Cài (plugin Claude Code — 1 lệnh mỗi máy)
-**Cách A — qua GitHub (máy nào cũng cài được):** đẩy thư mục `v4/` thành 1 repo (vd `haiha-ux/solo-prompts`, private cũng được nếu máy đã đăng nhập git), rồi trên máy bất kỳ:
+**Cách A — từ GitHub (ai cũng cài được, repo public):**
 ```
 /plugin marketplace add haiha-ux/solo-prompts
 /plugin install sp@solo-prompts

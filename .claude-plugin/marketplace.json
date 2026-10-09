@@ -1,7 +1,10 @@
 {
   "name": "solo-prompts",
   "description": "Bộ prompt cá nhân cho solo dev: điều phối đa tác tử, nghiên cứu, build, /goal.",
-  "owner": { "name": "haiha" },
+  "owner": {
+    "name": "haiha-ux",
+    "url": "https://github.com/haiha-ux"
+  },
   "plugins": [
     {
       "name": "sp",
