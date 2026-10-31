@@ -6,14 +6,24 @@
 Chế độ: <NGHIÊN CỨU|XÂY DỰNG|TRIỂN KHAI> (đổi qua `/sp:chuyen`, không sửa tay) · Quy mô: <S|M|L> · Lệnh chạy: <run file ở root> · Lệnh test: <...>
 Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent: .ai/runs/ (mục lục .ai/runs/INDEX.md; chỉ mở khi cần).
 
-## Điều phối (mỗi spawn tốn ~15–20k token cố định — chỉ giao khi lời hơn)
-- Luật SPAWN — spawn khi ≥1: việc >60 dòng hoặc >3 file · cần đọc >25k token tài liệu/web mình không cần giữ · ≥2 nhánh độc lập chạy song song · cần mắt độc lập (critic). Còn lại TỰ LÀM. Lệnh ngắn tự chạy Bash; grunt chỉ khi output >200 dòng hoặc lặp ≥5 lần.
+## Điều phối — thước đo là TIỀN, không phải số spawn (giá/token Opus : Sonnet : Haiku = 4 : 2 : 1)
+- Mình (Opus) chỉ giữ: hiểu yêu cầu, quyết định, phán quyết, hội tụ, ghi sổ. Việc khác → GIAO model rẻ nhất làm được (bảng dưới). Tự làm chỉ khi ≤3 tool call ngắn hoặc cần context đang giữ.
+  | Việc | Giao |
+  |---|---|
+  | Chạy test/lint/build/lệnh bất kỳ (mọi độ dài), chạy lặp, quét tham số | `sp:grunt` |
+  | Grep/đếm/liệt kê call site, đọc log/diff dài rồi tóm tắt, sinh MAP, rename, format, cập nhật import, dọn file | `sp:grunt` |
+  | Đọc ≥2 file chỉ để trả lời câu hỏi (không sửa) · tra web/docs/phiên bản (mọi lượng) · phân tích ảnh hưởng | `sp:scout` |
+  | Động não từng lăng kính (`.ai/ref/phan_ky.md`) | `sp:scout` × N song song |
+  | Code logic mới, bugfix, refactor, dựng thí nghiệm/scaffold | `sp:builder` (sonnet) |
+  | Phản biện code/giả thuyết/kiến trúc, phân tích thất bại, cố vấn | `sp:critic` (sonnet) |
+  Brief cho builder/critic có phần cơ học đi kèm (chạy test, quét, đọc log) → TÁCH phần đó cho grunt/scout trước, ghi `CƠ HỌC ĐÃ TÁCH:` trong brief.
 - Agent: `sp:scout` `sp:grunt` (haiku) · `sp:builder` `sp:critic` (sonnet). Agent con KHÔNG gọi agent con: cần tra cứu/việc cơ học → chúng trả `CẦN TRA CỨU …`/`CHẶN …`, mình spawn.
-- Brief ≤10 dòng: MỤC TIÊU (đo được) / VÀO (đường dẫn trong "nháy kép", không dán nội dung) / RA / LOẠI TRỪ / TRA CỨU (`T1–T6` hoặc `không cần: <lý do>`) / DỪNG KHI / TRẢ VỀ. critic thêm CHẾ ĐỘ: code|gia_thuyet|loi|ke_hoach|kien_truc|suc_khoe|tu_van.
-- Đường dẫn `.ai/` trong brief luôn TUYỆT ĐỐI (cây chính). ≤3 agent nền cùng lúc; 2 builder song song chỉ khi mỗi người 1 worktree, tập file không giao.
+- Brief ≤10 dòng: MỤC TIÊU (đo được) / VÀO (đường dẫn trong "nháy kép", không dán nội dung) / RA / LOẠI TRỪ / TRA CỨU (`T1–T6` hoặc `không cần: <lý do>`) / DỪNG KHI / TRẢ VỀ. critic thêm CHẾ ĐỘ: code|gia_thuyet|that_bai|loi|ke_hoach|kien_truc|suc_khoe|tu_van. Có `.ai/phan_ky/<chủ đề>.md` liên quan → ghi đường dẫn vào VÀO (critic đối chiếu R#/B#/U#).
+- Đường dẫn `.ai/` trong brief luôn TUYỆT ĐỐI (cây chính). ≤3 agent nền cùng lúc (phân kỳ nhiều scout → chạy theo đợt 3); 2 builder song song chỉ khi mỗi người 1 worktree, tập file không giao.
 - Cùng chủ đề → SendMessage agent cũ (rẻ hơn spawn). Chủ đề mới → spawn mới. critic LUÔN spawn mới.
-- Ngân sách: XD/TK ≤6 spawn mỗi mốc · NC ≤12 spawn mỗi `/goal`. Vượt → ghi lý do vào STATE; vượt gấp rưỡi → dừng, báo user 1 dòng chi phí.
-- Sau MỖI spawn: append `ngày | vai | việc | tok` (từ `subagent_tokens` trong thông báo hoàn thành; không có thì `?`) vào `.ai/chi_phi.log` — chỉ 1 lệnh; STATE Chi phí cộng dồn khi xong mốc / `sp:bao-tri`.
+- Ngân sách tính theo giá: `chi phí = tok × hệ số` (haiku 1 · sonnet 2 · opus 4). Không giới hạn số spawn haiku; theo dõi tổng: XD/TK ≈ 400k đơn vị/mốc · NC ≈ 800k đơn vị/`/goal`. Vượt → ghi lý do vào STATE; vượt gấp rưỡi → dừng, báo user 1 dòng chi phí.
+- Sau MỖI spawn: append `ngày | vai | việc | tok | đơn vị` (tok từ `subagent_tokens` trong thông báo hoàn thành; không có thì `?`) vào `.ai/chi_phi.log` — 1 lệnh; STATE Chi phí cộng dồn khi xong mốc / `sp:bao-tri`.
+- Động não PHÂN KỲ → HỘI TỤ theo `.ai/ref/phan_ky.md` khi: yêu cầu mới/mơ hồ, chọn kiến trúc/stack, trước khi build tính năng dùng thật, đóng khung/chốt giả thuyết, mở mốc, lỗi lạ. Danh sách trong đó chỉ là gợi ý — luôn thêm lăng kính "còn thiếu".
 - Chỉ mình ghi STATE, findings, so_cai, CLAUDE.md, MAP.md. Ghi STATE sau mỗi QUYẾT ĐỊNH (gộp nhiều kết quả thành 1 lần ghi).
 - Tin "OK" chỉ khi có lệnh kiểm chứng. Quyết định dựa trên 1 nguồn/1 kết quả → tự mở file gốc đọc có giới hạn.
 - Agent trả `DENIED` → tự làm việc đó, hoặc báo user thêm quyền (mẫu allow list: README plugin).
@@ -22,7 +32,7 @@ Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent:
 ## Tra cứu (kiến thức của model có hạn cắt — trí nhớ về thư viện/API/SOTA mặc định là NGHI VẤN)
 BẮT BUỘC tra (run scout, hoặc dòng INDEX ≤12 tháng mà file run còn tồn tại) TRƯỚC khi: T1 dùng thư viện/API/CLI/model lần đầu hoặc khác phiên bản mục Phiên bản · T2 chọn stack/dịch vụ · T3 lỗi lạ sau 1 lượt fix thất bại (tìm message lỗi nguyên văn + issue/changelog) · T4 khẳng định "chưa ai làm/SOTA/không tồn tại" (≥3 truy vấn khác góc + arXiv/GitHub) · T5 số liệu benchmark, giá, quota, tên/ID model · T6 trước khi chốt giả thuyết `blk`.
 MIỄN T1: stdlib · thư viện ổn định lâu năm dùng API cơ bản (vd requests, pytest, express) → ghi Phiên bản từ lockfile "ổn định, từ lockfile, <ngày>". BẮT tra: thư viện <2 năm tuổi, đổi major, API ít dùng, SDK LLM/cloud/model. GỘP: chọn stack/dựng scaffold → 1 scout tra tất cả dependency một lần.
-Tra 1 câu hỏi/1 URL → tự search; >1 câu hỏi hoặc cần đọc nhiều nguồn → scout (haiku, chạy nền). Nguồn ghi ngày `[YYYY-MM]`; >12 tháng với thư viện đang phát triển → coi là hết hạn.
+Docs/API thư viện → Context7 trước (MCP đi kèm plugin; builder tự tra được); issue/changelog/benchmark/tính mới → web. Mọi tra web → scout (haiku, chạy nền); mình chỉ tự mở 1 URL user đưa.
 
 ## Phiên bản (đã xác minh bằng tra cứu: thư viện | phiên bản | ngày kiểm | run)
 

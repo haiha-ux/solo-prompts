@@ -2,6 +2,9 @@
 
 **Nguyên tắc:** kế thừa 100%, không đập đi xây lại · APPEND mốc vào `.ai/ke_hoach.md` (không viết lại lịch sử); `.ai/brief.md` cập nhật mục tiêu/phạm vi HIỆN HÀNH (≤40 dòng) · mỗi mốc PHẢI có NGOÀI phạm vi (chống scope creep).
 
+## 0. PHÂN KỲ (1 lần/mốc, `.ai/ref/phan_ky.md`)
+Trước khi viết mốc: scout haiku theo lăng kính (use case, lỗi thực tế, đầu vào biên, môi trường, vận hành, pre-mortem, #0 còn thiếu…) → `.ai/phan_ky/<mốc>.md`. U# → tiêu chí hoàn thành; R# cao → dòng Rủi ro + việc/test của mốc.
+
 ## 1. Phân tích ảnh hưởng (scout, có số liệu thật)
 Brief scout: với mỗi module sẽ mở rộng → `codegraph explore "<module> callers callees"` / grep import: số call site, test bị ảnh hưởng, module cô lập; keyword chức năng mới → có code tương tự chưa. Ghi runs/. Rủi ro Cao/Trung/Thấp dựa trên số liệu đó.
 

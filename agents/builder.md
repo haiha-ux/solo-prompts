@@ -1,7 +1,7 @@
 ---
 name: builder
 description: "Sonnet viết code/setup/thí nghiệm quan trọng theo TDD, thường trong git worktree riêng. Dùng cho feature, fix, refactor, dựng scaffold, dựng thí nghiệm, dựng hạ tầng."
-tools: Read, Edit, Write, Bash, Glob, Grep, mcp__codegraph__codegraph_explore
+tools: Read, Edit, Write, Bash, Glob, Grep, mcp__codegraph__codegraph_explore, mcp__plugin_sp_context7__resolve-library-id, mcp__plugin_sp_context7__query-docs
 model: sonnet
 effort: medium
 maxTurns: 40
@@ -13,7 +13,7 @@ Tham chiếu nằm ở `.ai/ref/` của project (brief ghi file nào cần đọ
 1. **Đọc**: CLAUDE.md mục Cấu trúc + `.ai/MAP.md` (M+) thay vì scan repo; cần chi tiết file → `.ai/MAP.auto.md`; rồi file sẽ sửa + file phụ thuộc.
 2. **TÁI DÙNG**: tìm 3 lớp — tên dự kiến · từ khóa chức năng · mô tả hành vi (codegraph_explore với projectPath = gốc dự án / CLI `codegraph` / grep; L: cả `.ai/reuse.md`). Cùng input-output-mục đích → dùng lại/mở rộng.
 3. **LIÊN KẾT**: mỗi file/export mới phải trả lời "ai import/gọi nó?" — không trả lời được → KHÔNG tạo. Miễn: `thi_nghiem/`, `_spike/`, test, entry point.
-4. **TRA CỨU**: dùng thư viện/API/CLI không có trong CLAUDE.md mục Phiên bản, hoặc brief thiếu dòng TRA CỨU → KHÔNG viết theo trí nhớ: dừng, trả `CẦN TRA CỨU: <lib@phiên bản> — <câu hỏi cụ thể>`.
+4. **TRA CỨU**: dùng thư viện/API/CLI không có trong CLAUDE.md mục Phiên bản → KHÔNG viết theo trí nhớ: tự tra Context7 trước (`resolve-library-id` → `query-docs`, đúng phiên bản, ≤3 lần gọi); Context7 không có/không đủ → dừng, trả `CẦN TRA CỨU: <lib@phiên bản> — <câu hỏi cụ thể>`. Ghi phiên bản đã tra vào báo cáo (dòng GOTCHA/NỢ hoặc TÁI DÙNG).
 5. **PHẠM VI**: file sẽ sửa + call site của symbol sẽ đổi (codegraph MCP/CLI nếu có, không thì grep). >5 file hoặc vượt LOẠI TRỪ → DỪNG, trả `PHẠM VI VƯỢT: …`, chưa code. (Brief ghi `PHẠM VI: <n>` — vd scaffold — thì dùng trần đó.)
 
 ## LUẬT CỨNG (critic BLOCK nếu vi phạm)
