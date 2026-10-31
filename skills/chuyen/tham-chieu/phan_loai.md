@@ -4,7 +4,8 @@
 1. Có kết luận nghiên cứu (`.ai/findings.md` hoặc tài liệu user đưa) mà MỌI giả thuyết chặn đường (`blk`) đều confirmed kèm lệnh/thí nghiệm tái lập? → **TK**. (Khẳng định không kèm cách tái lập, hoặc còn `blk` open → không tính.)
 2. Có ít nhất 1 điều cốt lõi CHƯA ai chứng minh khả thi, hoặc phải tra cứu/thử nghiệm mới biết cách làm? → **NC**
 3. Viết được ngay ≥3 tiêu chí chấp nhận kiểm bằng lệnh/test, mọi thành phần đã biết cách làm? → **XD**. Đã biết cách làm nhưng yêu cầu mơ hồ → XD, tự viết 3 tiêu chí, báo user.
-Phân vân 2 vs 3 → NC, bắt đầu bằng 1 `/goal` khảo sát ngắn. Đoán → `tin_cay: thấp`; hỏi user ĐÚNG 1 câu chỉ khi sai sẽ tốn lớn.
+Phân vân 2 vs 3 → NC, bắt đầu bằng 1 `/goal` khảo sát ngắn.
+XD nhỏ, rủi ro thấp (script dùng 1 lần, ≤2 file, không dữ liệu/người dùng thật) → XD + đánh dấu việc `nhẹ` (xem `sp:xay-dung` mục Việc NHẸ). Đoán → `tin_cay: thấp`; hỏi user ĐÚNG 1 câu chỉ khi sai sẽ tốn lớn.
 
 ## Yêu cầu mới trên dự án đã có chế độ chính
 | Yêu cầu mới | Chế độ chính hiện tại | Làm gì |
