@@ -125,6 +125,9 @@ Giám khảo `/goal` là model đọc **transcript**, không đọc file → đi
 TK (từ kết quả nghiên cứu có lệnh tái lập): tự phân loại TRIỂN KHAI → SPEC.md + tests/acceptance + phân kỳ + 5 haiku + critic, 13 test xanh · $1.84.
 Luồng phụ (thêm từ ghép tiếng Việt vào dự án XD): giữ XÂY DỰNG + mở `NC:tach-tu-ghep`; 6 scout + 2 grunt; H1 F1=0.885 < 0.90 → failing → tái lập ×3 + đối chứng oracle (0.985) + ablation → mở H3, không bác bỏ vội.
 NC (giả thuyết sai thật): failing → grunt đối chứng dương + ablation → critic that_bai loại F1–F4 → F5 → refuted kèm bài học + hướng mới · $1.58.
+v4.7.1 NC (join vs +=): phân kỳ trước khi ghi H → kill viết trước → grunt đo + biến thể → failing → critic that_bai F1–F4 loại → F5 → critic gia_thuyet → refuted; `lint_so_cai.js` gọi 4 lần, 0 lỗi; in dòng ĐỊNH TUYẾN · $0.98 + $1.70.
+v4.7.1 luồng phụ (tiếp tục phiên cũ): khôi phục 2 agent chết từ STATE → hỏi user 1 quyết định thật (đăng ký dataset) → H3 failing → biến thể H3.1 có dự đoán mới → vẫn hụt → PARKED (không refuted vì nguyên nhân F2 quy mô corpus chưa loại) kèm điều kiện mở lại → đóng luồng phụ sau 3/3 vòng, giữ XÂY DỰNG · lint 0 lỗi · $3.08.
+Chạy không giao diện (`claude -p`) với thí nghiệm dài: đặt `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`, nếu không agent nền chạy >10 phút sau lượt cuối sẽ bị dừng.
 Chi phí còn lại chủ yếu là context Opus đọc lại mỗi lượt + suy nghĩ của Opus; haiku (alias = Haiku 5.5) chỉ $0.02–0.06 mỗi lần chạy.
 
 ## Chưa kiểm chứng

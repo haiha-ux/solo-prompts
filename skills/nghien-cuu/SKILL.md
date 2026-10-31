@@ -35,6 +35,7 @@ H7.1 | <giả thuyết> | kill: <MỚI, viết trước> | test: … | blk | par
 `blk` = chặn đường triển khai. Trạng thái hiện tại = dòng V cuối của id. Nguồn web nằm trong run của scout, trích `runs/<file>#S<n>`.
 
 ## Một vòng
+0. Đang là luồng phụ → ĐẦU mỗi vòng tăng `vòng k/3` ở dòng `Luồng phụ` của STATE (gộp vào lệnh ghi sổ đầu tiên của vòng); k đã là 3 → không mở vòng mới, phán quyết/đóng.
 1. **Đóng khung**: PHÂN KỲ trước (`.ai/ref/phan_ky.md`, scout haiku theo lăng kính: giả định ngầm, phương án thay thế, đối thủ/hiện trạng ngành, pre-mortem, câu hỏi chưa biết, + #0 lăng kính còn thiếu) → hội tụ thành 1–5 giả thuyết có `kill` + `test`, mỗi giả thuyết tách rõ LÕI và giả định PHỤ TRỢ. Trước khi ghi: grep từ khóa trong sổ cái — trùng hướng đã refuted thì phải nêu lý do mới.
 2. **Thu thập — 2 pha** (scout, chạy nền, chia theo GÓC không trùng; đã có run còn hạn trong `runs/INDEX.md` → không spawn):
    Pha 1 (≤3 scout, ≤6 search/con): (a) nguồn gốc: paper/docs/spec · (b) thực chiến: benchmark/GitHub issue/repo · (c) phản bác: ai nói nó KHÔNG chạy, giới hạn đã biết. Mỗi scout trả thêm `THUẬT NGỮ MỚI` + `THEO DẤU`.
@@ -46,7 +47,7 @@ H7.1 | <giả thuyết> | kill: <MỚI, viết trước> | test: … | blk | par
    Ngân sách nhóm H: ≤3 biến thể, ≤6 thí nghiệm KHÁC NHAU (đối chứng/ablation/chạy lại KHÔNG tính) — hết → `parked`. Đang là luồng phụ mà hết 3 vòng giữa chừng → `parked`.
    Biến thể confirmed → ghi V của H cha `confirmed qua H<n>.<k>` (cổng đọc V của H cha). Tra cả nhóm: `grep -E "H7(\.[0-9]+)? \|" .ai/so_cai.md`.
 4. **Phản biện** (critic CHẾ ĐỘ gia_thuyet, spawn MỚI, không đưa lập luận của bạn): giả thuyết sắp chốt/bác bỏ, gộp ≤3 cái cùng chủ đề vào 1 critic. `KẾT: sụp` → không được confirmed.
-5. **Phán quyết** (tự làm; đang là luồng phụ → tăng `vòng k/3` ở dòng `Luồng phụ` của STATE, k=3 → đóng theo `sp:chuyen`): nguồn tier A quyết định kết luận → tự mở kiểm (tier do haiku gán, có thể sai). Ghi dòng V, cập nhật findings.md, kết quả bất ngờ → giả thuyết con. 1 dòng STATE.
+5. **Phán quyết** (tự làm; luồng phụ hết vòng 3/3 → đóng theo `sp:chuyen`): nguồn tier A quyết định kết luận → tự mở kiểm (tier do haiku gán, có thể sai). Ghi dòng V, cập nhật findings.md, kết quả bất ngờ → giả thuyết con. 1 dòng STATE.
 
 ## Luật phán quyết (cố định trước khi xem kết quả)
 - **confirmed**: đạt `test` trong dung sai bằng `cmd` chạy lại được — hoặc, với khẳng định không thí nghiệm được: ≥1 nguồn tier A hoặc ≥2 tier B độc lập (khác tác giả, không trích lại nhau); VÀ critic không `sụp`.
