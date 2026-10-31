@@ -6,8 +6,8 @@
 Chế độ: <NGHIÊN CỨU|XÂY DỰNG|TRIỂN KHAI> (đổi qua `/sp:chuyen`, không sửa tay) · Quy mô: <S|M|L> · Lệnh chạy: <run file ở root> · Lệnh test: <...>
 Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent: .ai/runs/ (mục lục .ai/runs/INDEX.md; chỉ mở khi cần).
 
-## Điều phối — thước đo là TIỀN, không phải số spawn (giá/token Opus : Sonnet : Haiku = 4 : 2 : 1)
-- Mình (Opus) chỉ giữ: hiểu yêu cầu, quyết định, phán quyết, hội tụ, ghi sổ. Việc khác → GIAO model rẻ nhất làm được (bảng dưới). Tự làm chỉ khi ≤3 tool call ngắn hoặc cần context đang giữ.
+## Điều phối — thước đo là TIỀN, không phải số spawn (Opus đắt nhất; Sonnet ≈ ½ Opus; alias `haiku` hiện là Haiku 5.5 ≈ 1/40 Opus — chạy thật: 4 lượt haiku tốn $0.05 trong khi Opus tốn $1.85)
+- Mình (Opus) chỉ giữ: hiểu yêu cầu, quyết định, phán quyết, hội tụ, ghi sổ. Việc khác → GIAO model rẻ nhất làm được (bảng dưới). Tự làm chỉ khi ≤3 tool call ngắn hoặc cần context đang giữ — KHÔNG BAO GIỜ tự chạy test/benchmark/build (luôn grunt). Báo cáo kết mốc in `ĐỊNH TUYẾN: haiku n · sonnet m · tự chạy k`.
   | Việc | Giao |
   |---|---|
   | Chạy test/lint/build/lệnh bất kỳ (mọi độ dài), chạy lặp, quét tham số | `sp:grunt` |
@@ -21,7 +21,7 @@ Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent:
 - Brief ≤10 dòng: MỤC TIÊU (đo được) / VÀO (đường dẫn trong "nháy kép", không dán nội dung) / RA / LOẠI TRỪ / TRA CỨU (`T1–T6` hoặc `không cần: <lý do>`) / DỪNG KHI / TRẢ VỀ. critic thêm CHẾ ĐỘ: code|gia_thuyet|that_bai|loi|ke_hoach|kien_truc|suc_khoe|tu_van. Có `.ai/phan_ky/<chủ đề>.md` liên quan → ghi đường dẫn vào VÀO (critic đối chiếu R#/B#/U#).
 - Đường dẫn `.ai/` trong brief luôn TUYỆT ĐỐI (cây chính). ≤3 agent nền cùng lúc (phân kỳ nhiều scout → chạy theo đợt 3); 2 builder song song chỉ khi mỗi người 1 worktree, tập file không giao.
 - Cùng chủ đề → SendMessage agent cũ (rẻ hơn spawn). Chủ đề mới → spawn mới. critic LUÔN spawn mới.
-- Ngân sách tính theo giá: `chi phí = tok × hệ số` (haiku 1 · sonnet 2 · opus 4). Không giới hạn số spawn haiku; theo dõi tổng: XD/TK ≈ 400k đơn vị/mốc · NC ≈ 800k đơn vị/`/goal`. Vượt → ghi lý do vào STATE; vượt gấp rưỡi → dừng, báo user 1 dòng chi phí.
+- Ngân sách tính theo giá: `chi phí = tok × hệ số` (haiku 1 · sonnet 20 · opus 40 nếu haiku là 5.5; 1 · 2 · 4 nếu là 4.5). Phần đắt nhất là CONTEXT CỦA MÌNH: không `cat` cả file tham chiếu dài — đưa đường dẫn cho agent; tự đọc thì chỉ mục cần (`grep -n`, `sed -n a,bp`). Không giới hạn số spawn haiku (trừ trần riêng của phân kỳ); theo dõi tổng: XD/TK ≈ 400k đơn vị/mốc · NC ≈ 800k đơn vị/`/goal`. Vượt → ghi lý do vào STATE; vượt gấp rưỡi → dừng, báo user 1 dòng chi phí.
 - Sau MỖI spawn: append `ngày | vai | việc | tok | đơn vị` (tok từ `subagent_tokens` trong thông báo hoàn thành; không có thì `?`) vào `.ai/chi_phi.log` — 1 lệnh; STATE Chi phí cộng dồn khi xong mốc / `sp:bao-tri`.
 - Động não PHÂN KỲ → HỘI TỤ theo `.ai/ref/phan_ky.md` khi: yêu cầu mới/mơ hồ, chọn kiến trúc/stack, trước khi build tính năng dùng thật, đóng khung/chốt giả thuyết, mở mốc, lỗi lạ. Danh sách trong đó chỉ là gợi ý — luôn thêm lăng kính "còn thiếu".
 - Chỉ mình ghi STATE, findings, so_cai, CLAUDE.md, MAP.md. Ghi STATE sau mỗi QUYẾT ĐỊNH (gộp nhiều kết quả thành 1 lần ghi).

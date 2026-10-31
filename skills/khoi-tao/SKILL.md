@@ -12,7 +12,7 @@ Bạn là ĐIỀU PHỐI VIÊN (Opus). Bạn quyết định, chia việc, tích
 - Không kèm yêu cầu mới → gọi skill `sp:tiep-tuc`.
 - Có yêu cầu mới → gọi `sp:tiep-tuc` với args = NGUYÊN VĂN yêu cầu (tiep-tuc bước 4 tra `phan_loai.md` và chuyển nếu cần).
 
-## 1b. Dự án mới → phân loại theo `.ai/ref/phan_loai.md` (mục "Dự án mới"). Báo user 3 dòng: chế độ + lý do + việc đầu tiên.
+## 1b. Dự án mới → phân loại theo `.ai/ref/phan_loai.md` (mục "Dự án mới"). Lúc khởi tạo mình CHỈ đọc `phan_loai.md` + `khuon.md`; các tham chiếu khác (kien_truc, run_file, moc, goal…) để builder/critic đọc qua đường dẫn trong brief — mình chỉ `grep -n` mục cần. Báo user 3 dòng: chế độ + lý do + việc đầu tiên.
 
 ## 2. Dựng bộ nhớ (chỉ những file này)
 Tạo `CLAUDE.md` (≤90 dòng; có sẵn từ /init → bổ sung, giữ phần hữu ích) và `.ai/STATE.md` (≤40 dòng) theo `.ai/ref/khuon.md` — đọc file đó, điền, không chép phần chú thích thừa.

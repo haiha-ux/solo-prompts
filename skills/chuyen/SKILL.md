@@ -30,7 +30,7 @@ Cú pháp: `sp:chuyen <NC|XD|TK> [phạm vi:<thành phần>] [lý do]` hoặc c�
 **Mọi chế độ:** `.ai/ref/` · `.ai/runs/INDEX.md` · git + `.gitignore`/`.gitattributes` theo `.ai/ref/kien_truc.md` (Bố cục chuẩn).
 **NC (chính):** `.ai/findings.md` + `.ai/so_cai.md` (khuôn trong `sp:nghien-cuu`), câu hỏi gốc + "Rủi ro chặn đường" từ yêu cầu. CLAUDE.md: `Quy mô: S (tạm)`, mục Cấu trúc ghi "chưa chốt — làm khi chuyển XD/TK".
 **NC (luồng phụ):** như trên nếu thiếu file; thêm vào findings mục `## Luồng phụ <phạm vi>: <câu hỏi>` (tạo mới dù findings đã có).
-**XD:**
+**XD:** (bước phân kỳ của mốc 1 theo LUẬT CỨNG 2 của `sp:xay-dung` chạy ngay sau khi ĐẢM BẢO xong)
 1. Stack chưa chốt → so 2–3 lựa chọn (scout nếu cần), chọn 1 → CLAUDE.md Quyết định. Stack/tích hợp lạ → thử bỏ đi trong `_spike/`.
 2. Module chính + ai gọi ai + data model sơ bộ → kiến trúc + **Quy mô S/M/L** theo `.ai/ref/kien_truc.md` → CLAUDE.md Cấu trúc + `Quy mô:`.
 3. **Chưa có code sản phẩm** (`thi_nghiem/`, `_spike/` không tính) → builder dựng scaffold theo bố cục chuẩn + run file (`run_file.md`) + `.gitignore` theo stack + `.env.example` + test đầu tiên (brief VÀO = 2 file `.ai/ref/` đó, `PHẠM VI: 15`). **Đã có code** → KHÔNG dựng lại: grunt MAP (M+) + test hiện có làm baseline; điền Cấu trúc/Quy mô/Lệnh từ code thật; lệch chuẩn → nợ.

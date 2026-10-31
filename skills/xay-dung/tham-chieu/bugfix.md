@@ -1,6 +1,6 @@
 # Quy trình sửa lỗi (critic CHẾ ĐỘ loi làm 1–4, builder làm 5–7)
 
-1. **TÁI HIỆN** — test hoặc lệnh tái hiện, PHẢI đỏ. Không đỏ = chưa hiểu đúng lỗi.
+1. **TÁI HIỆN** — grunt (haiku) chạy test/lệnh tái hiện và ghi output vào runs/; PHẢI đỏ. Không đỏ = chưa hiểu đúng lỗi.
 2. **THU HẸP** — xác định tầng (bảng trong `kien_truc.md`) → file → hàm → dòng (binary search, log ở đầu vào/đầu ra của tầng nghi ngờ, test cô lập từng phần). Không nhảy sang tầng khác trước khi loại trừ tầng hiện tại.
 3. **ROOT CAUSE** — hỏi "tại sao?" đến khi không hỏi được nữa. Có fallback → test TỪNG nhánh.
 4. **PHẠM VI** — codegraph (MCP/CLI nếu có) hoặc grep liệt kê mọi call site; tìm chỗ copy-paste cùng lỗi ở module khác. Liệt kê TẤT CẢ chỗ phải sửa trước khi sửa.
