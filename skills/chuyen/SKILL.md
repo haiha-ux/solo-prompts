@@ -12,7 +12,7 @@ Cú pháp: `sp:chuyen <NC|XD|TK> [phạm vi:<thành phần>] [lý do]` hoặc c�
 1. Đọc STATE (+ `grep` findings/so_cai nếu có). Xác định `từ → đến`, chính hay phụ.
 2. Chuyển chính khi đang có luồng phụ → đóng luồng phụ trước (hàng "Đóng luồng phụ").
 3. **ĐẢM BẢO** chế độ đích (dưới) — kiểm bằng `ls`, có rồi KHÔNG ghi đè, thiếu mới tạo — rồi **bàn giao** theo bảng (ghi vào file vừa đảm bảo). Riêng bước critic ke_hoach của ĐẢM BẢO XD/TK chạy SAU bàn giao, để soát cả "Giả định chưa kiểm".
-4. Ghi STATE (`từ` = giá trị cũ của `Chế độ:`; "(chưa)" = mới): dòng đầu `Chế độ: <đích>  Luồng phụ: <không | NC:<phạm vi> (vòng k/3 — sp:nghien-cuu tăng k sau mỗi vòng)>` + 1 dòng nhật ký `chuyển A→B | chính/phụ | lý do | bàn giao | cảnh báo`. Chuyển chính → sửa `Chế độ:` trong CLAUDE.md. Commit `.ai/`.
+4. Ghi STATE — `Chế độ:` LUÔN viết tên đầy đủ NGHIÊN CỨU | XÂY DỰNG | TRIỂN KHAI (NC/XD/TK chỉ là cú pháp lệnh) (`từ` = giá trị cũ; "(chưa)" = mới): dòng đầu `Chế độ: <đích>  Luồng phụ: <không | NC:<phạm vi> (vòng k/3 — sp:nghien-cuu tăng k sau mỗi vòng)>` + 1 dòng nhật ký `chuyển A→B | chính/phụ | lý do | bàn giao | cảnh báo`. Chuyển chính → sửa `Chế độ:` trong CLAUDE.md. Commit `.ai/`. Kết thúc bằng ĐÚNG 1 lệnh Bash: ghi sổ + commit + `ls` mọi file chế độ đích cần có + `head -1 .ai/STATE.md` (in ra làm bằng chứng).
 5. **Được khoi-tao/tiep-tuc/skill khác gọi → DỪNG ở đây, trả quyền** (skill gọi sẽ báo user và chạy tiếp). User gọi trực tiếp → báo user 2 dòng (chuyển gì · cảnh báo) rồi gọi skill theo bảng "Chế độ → skill" trong `phan_loai.md`. Mỗi `/goal` chỉ chạy 1 chế độ.
 
 ## Bàn giao theo cặp

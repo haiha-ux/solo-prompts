@@ -4,6 +4,13 @@ description: "Vòng nghiên cứu giả thuyết → bằng chứng/thí nghiệ
 ---
 # Nghiên cứu — điều phối viên đọc 1 lần mỗi phiên (đọc lại sau khi context bị nén)
 
+## LUẬT CỨNG (không được tự miễn — vi phạm = làm lại bước đó)
+1. **Đóng khung = phân kỳ trước**: chưa có `.ai/phan_ky/<nhóm>.md` → spawn `sp:scout` CHẾ ĐỘ phan_ky ≥3 lăng kính + #0 trong CÙNG 1 lượt; chưa có file đó thì KHÔNG ghi dòng H.
+2. **Mình không tự chạy lệnh thí nghiệm/đo/ablation** → `sp:grunt`. Không tự search web → `sp:scout`.
+3. **Chạm kill → bước 3b** (failing → grunt đối chứng/ablation → critic `that_bai`). Trước MỌI dòng `V … refuted` chạy `node "${CLAUDE_PLUGIN_ROOT}/hooks/lint_so_cai.js"` và in kết quả; lint báo lỗi thì KHÔNG ghi refuted.
+4. **Chốt confirmed/refuted** chỉ sau khi critic `gia_thuyet` trả KẾT.
+5. Kết mỗi `/goal` in `ĐỊNH TUYẾN: haiku n · sonnet m · tự chạy k` + output của `node "${CLAUDE_PLUGIN_ROOT}/hooks/lint_so_cai.js"`.
+
 ## File (trong `.ai/`, chỉ điều phối viên ghi)
 **`findings.md`** — file DUY NHẤT đọc mỗi phiên, ≤60 dòng:
 ```
@@ -34,7 +41,7 @@ H7.1 | <giả thuyết> | kill: <MỚI, viết trước> | test: … | blk | par
    Pha 2 (CHỈ cho giả thuyết `blk` hoặc khẳng định tính mới; 1–2 scout, ≤6 search/con): truy vấn bằng thuật ngữ mới + đi theo trích dẫn (arXiv cited-by, GitHub used-by/issues), tìm paper/repo GỐC thay vì blog, tìm repo cùng ý tưởng theo mô tả hành vi. Dừng khi 2 truy vấn liên tiếp không thêm nguồn tier A/B mới. Trần: ≤5 scout cho 1 giả thuyết `blk`.
 3. **Thí nghiệm** (khi `test` cần số đo): builder dựng trong worktree, `thi_nghiem/E<n>/` có 1 lệnh chạy, cố định seed. merge `thi_nghiem/E<n>/` về nhánh chính TRƯỚC khi ghi dòng `E` (cmd phải chạy được từ cây chính). grunt chạy lặp/quét tham số, trả về sẵn nội dung dòng `E`. Kết quả gần ngưỡng → CHẠY LẠI cùng thí nghiệm ≥3 lần (vẫn là 1 E, ghi dao động).
 3b. **Chạm kill → PHÂN TÍCH THẤT BẠI, KHÔNG bác bỏ ngay** (1 lượt = 1 lần sửa bug F1 HOẶC 1 biến thể; tối đa 3 lượt cho 1 nhóm H):
-   ① ghi `V | H | failing` · ② code thí nghiệm chưa có công tắc bật/tắt từng thành phần → builder thêm (SendMessage builder cũ) · ③ grunt ĐỐI CHỨNG/ABLATION (đối chứng dương tính, ≥3 seed, đổi 1 biến/lần) · ④ critic `that_bai` (spawn MỚI) phân loại F1→F5, ghi dòng `F` · ⑤ critic trả `CẦN GRUNT` → (cần công tắc mới thì quay lại ②) → ③ → critic `that_bai` MỚI (không tính thêm lượt).
+   ① ghi `V | H | failing` GỘP trong cùng lệnh/lượt với việc spawn grunt · ② code thí nghiệm chưa có công tắc bật/tắt từng thành phần → builder thêm (SendMessage builder cũ) · ③ grunt ĐỐI CHỨNG/ABLATION (đối chứng dương tính, ≥3 seed, đổi 1 biến/lần) · ④ critic `that_bai` (spawn MỚI) phân loại F1→F5, ghi dòng `F` · ⑤ critic trả `CẦN GRUNT` → (cần công tắc mới thì quay lại ②) → ③ → critic `that_bai` MỚI (không tính thêm lượt).
    F1 (bug) → builder sửa, chạy lại; vẫn chạm kill → quay lại ① · F2–F4 → **vòng nâng cấp**: F4 thì chạy thêm phân kỳ lăng kính #9 giả định ngầm + #0 (dùng lại file phân kỳ của nhóm) → sinh biến thể H<n>.<k> (đổi phụ trợ, giữ lõi, kill MỚI viết + commit TRƯỚC khi chạy, ≥1 dự đoán MỚI). Biến thể chạm kill → lại 3b cho chính nó.
    Ngân sách nhóm H: ≤3 biến thể, ≤6 thí nghiệm KHÁC NHAU (đối chứng/ablation/chạy lại KHÔNG tính) — hết → `parked`. Đang là luồng phụ mà hết 3 vòng giữa chừng → `parked`.
    Biến thể confirmed → ghi V của H cha `confirmed qua H<n>.<k>` (cổng đọc V của H cha). Tra cả nhóm: `grep -E "H7(\.[0-9]+)? \|" .ai/so_cai.md`.

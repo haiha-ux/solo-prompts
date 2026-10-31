@@ -59,8 +59,9 @@ Phân vân → NGHIÊN CỨU khảo sát ngắn (sai hướng build đắt hơn)
 - **Có agent cố vấn không?** Claude Code không có "advisor" sẵn. Plugin dùng `sp:critic` CHẾ ĐỘ `tu_van` (Sonnet, effort high, tự search ≤6 nguồn mới) cho quyết định đắt: chọn stack, kiến trúc, trước khi chuyển TK. Tri thức dự án nằm ở CLAUDE.md (Quyết định, Phiên bản, Gotchas) + findings — không tạo kho nhớ thứ 4 dễ lệch.
 - **Agent ít search web?** Đã có LUẬT TRA CỨU T1–T6 trong CLAUDE.md dự án: bắt buộc tra trước khi dùng thư viện/API lần đầu, chọn stack, gặp lỗi lạ, khẳng định "chưa ai làm", dùng số liệu, chốt giả thuyết. Builder không viết theo trí nhớ — thiếu thì trả `CẦN TRA CỨU`. Nguồn ghi ngày, >12 tháng coi là hết hạn. Nghiên cứu thu thập 2 pha (mở rộng thuật ngữ + theo dấu trích dẫn).
 - **Máy không có codegraph?** Chạy bình thường bằng grep/git ls-files; hook báo 1 dòng "máy thiếu: codegraph".
-- **Vì sao Haiku được dùng nhiều hơn?** Thước đo là TIỀN (giá/token Opus : Sonnet : Haiku = 4 : 2 : 1), không phải số lần spawn. Bảng định tuyến trong CLAUDE.md dự án: chạy lệnh, đọc log, grep, tra docs/web, phân tích ảnh hưởng, động não → haiku; chỉ logic/phản biện mới lên sonnet; Opus giữ quyết định.
+- **Vì sao Haiku được dùng nhiều hơn?** Thước đo là TIỀN, không phải số lần spawn: alias `haiku` hiện là Haiku 5.5 ≈ 1/40 giá Opus, Sonnet ≈ ½ Opus (đo thật: haiku $0.02–0.06/lần chạy). Bảng định tuyến trong CLAUDE.md dự án: chạy lệnh, đọc log, grep, tra docs/web, phân tích ảnh hưởng, động não → haiku; chỉ logic/phản biện mới lên sonnet; Opus giữ quyết định.
 - **Động não triệt để?** `.ai/ref/phan_ky.md`: trước việc quan trọng, nhiều scout haiku song song mỗi con 1 lăng kính (use case, lỗi thực tế/FMEA, đầu vào biên, môi trường thật, bảo mật, vận hành/chi phí, pre-mortem, phương án khác, giả định ngầm, phụ thuộc, hệ quả bậc hai, kiểm thử, pháp lý…) + LUÔN có lăng kính "còn thiếu" tự đề xuất loại danh sách mới → hội tụ, xếp hạng → biến thành tiêu chí chấp nhận, test case, rủi ro mốc, giả thuyết.
+- **Sổ cái có được kiểm tự động?** `hooks/lint_so_cai.js` (node, tất định): kill có trước, refuted phải có dòng F + lesson, ≤3 biến thể, findings ≤60 dòng — bắt buộc chạy trước khi ghi refuted và khi kết `/goal`.
 - **Giả thuyết fail có bị bỏ phí?** Không: chạm kill → `failing` → grunt chạy đối chứng/ablation → critic `that_bai` phân loại F1 (bug) … F5 (lõi sai) → sửa bug hoặc sinh ≤3 biến thể (giữ lõi, kill mới viết trước, phải có dự đoán mới) → chỉ `refuted` khi lõi sai có bằng chứng hoặc cạn biến thể, kèm bài học cho hướng sau. Có luật chống dời cột gôn.
 - **`/goal` kẹt?** `/goal clear` rồi `/sp:tiep-tuc` — STATE là nguồn sự thật, không mất việc.
 - **Context bị nén giữa phiên?** Hook nhắc agent đọc lại STATE và gọi lại skill.
@@ -121,6 +122,8 @@ Giám khảo `/goal` là model đọc **transcript**, không đọc file → đi
 | 4.5.2 | 4 | 3 | — | 1.85 | 2.61 | luật cứng: phân kỳ + grunt + critic; critic bắt 2 lỗi thật, 7 → 37 test |
 | 4.5.3 | 6 | 3 | 35 | 1.84 | 2.68 | 6 lượt Opus chỉ để ghi log |
 | 4.6.0 | 5 | 3 | 29 | 1.50 | 2.13 | ghi sổ gộp, spawn cùng lượt |
+TK (từ kết quả nghiên cứu có lệnh tái lập): tự phân loại TRIỂN KHAI → SPEC.md + tests/acceptance + phân kỳ + 5 haiku + critic, 13 test xanh · $1.84.
+Luồng phụ (thêm từ ghép tiếng Việt vào dự án XD): giữ XÂY DỰNG + mở `NC:tach-tu-ghep`; 6 scout + 2 grunt; H1 F1=0.885 < 0.90 → failing → tái lập ×3 + đối chứng oracle (0.985) + ablation → mở H3, không bác bỏ vội.
 NC (giả thuyết sai thật): failing → grunt đối chứng dương + ablation → critic that_bai loại F1–F4 → F5 → refuted kèm bài học + hướng mới · $1.58.
 Chi phí còn lại chủ yếu là context Opus đọc lại mỗi lượt + suy nghĩ của Opus; haiku (alias = Haiku 5.5) chỉ $0.02–0.06 mỗi lần chạy.
 

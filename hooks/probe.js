@@ -48,5 +48,9 @@ if ((input.source || 'startup') === 'startup') {
   const missing = ['codegraph', 'gh'].filter((c) => !has(c));
   if (missing.length) notes.push(`[sp] máy thiếu: ${missing.join(', ')} → ${missing.includes('codegraph') ? 'dùng grep/git ls-files thay codegraph; ' : ''}${missing.includes('gh') ? 'không tạo PR/repo bằng gh.' : ''}`);
 }
-if (input.source === 'compact') notes.push('[sp] context vừa nén: đọc lại .ai/STATE.md rồi gọi lại skill của chế độ hiện tại trước khi làm tiếp.');
+if (input.source === 'compact') {
+  let mode = '';
+  try { mode = (fs.readFileSync(path.join(project, '.ai', 'STATE.md'), 'utf8').match(/Chế độ:\s*([^\n]*?)(?:\s{2,}|$)/m) || [])[1] || ''; } catch { /* bỏ qua */ }
+  notes.push(`[sp] context vừa nén (chế độ: ${mode || '?'}): đọc lại .ai/STATE.md rồi GỌI LẠI skill của chế độ trước khi làm tiếp. LUẬT CỨNG còn hiệu lực: không tự chạy test/đo/thí nghiệm (→ sp:grunt) · không tự search (→ sp:scout) · phân kỳ trước việc đầu mốc/đóng khung giả thuyết · critic kết mốc · chạm kill → failing + phân tích thất bại trước khi refuted.`);
+}
 if (notes.length) console.log(JSON.stringify({ hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: notes.join('\n') } }));

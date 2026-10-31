@@ -1,4 +1,4 @@
-# Quy trình sửa lỗi (critic CHẾ ĐỘ loi làm 1–4, builder làm 5–7)
+# Quy trình sửa lỗi (grunt bước 1, critic CHẾ ĐỘ loi bước 2–4, builder 5–7)
 
 1. **TÁI HIỆN** — grunt (haiku) chạy test/lệnh tái hiện và ghi output vào runs/; PHẢI đỏ. Không đỏ = chưa hiểu đúng lỗi.
 2. **THU HẸP** — xác định tầng (bảng trong `kien_truc.md`) → file → hàm → dòng (binary search, log ở đầu vào/đầu ra của tầng nghi ngờ, test cô lập từng phần). Không nhảy sang tầng khác trước khi loại trừ tầng hiện tại.

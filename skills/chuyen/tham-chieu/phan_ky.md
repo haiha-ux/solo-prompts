@@ -3,7 +3,7 @@
 ## Khi nào BẮT BUỘC
 Yêu cầu mới có >1 cách hiểu hoặc chưa có tiêu chí chấp nhận · chọn kiến trúc/stack · trước khi build tính năng dùng THẬT (người dùng/dữ liệu/phần cứng thật) · đóng khung giả thuyết NC · trước khi chốt giả thuyết `blk` · mở mốc · lỗi lạ sau 1 lượt fix thất bại · user hỏi "còn gì nữa / đã nghĩ đủ chưa".
 Bỏ qua: việc ≤1 file đã có test; đã có `.ai/phan_ky/<chủ đề>.md` cùng chủ đề và yêu cầu không đổi.
-TRẦN: 1 phân kỳ / mốc (XD/TK) hoặc / nhóm giả thuyết (NC) — biến thể của cùng H dùng lại file cũ, chỉ chạy thêm lăng kính #9 + #0 · ≤8 scout tổng (chạy theo đợt ≤3) · vòng bổ sung của #0 ≤3 scout · chi phí ≈ (overhead ~15k + 3–5k việc) × số scout, tính theo giá haiku.
+TRẦN: 1 phân kỳ / mốc (XD/TK) hoặc / nhóm giả thuyết (NC) — biến thể của cùng H dùng lại file cũ, chỉ chạy thêm lăng kính #9 + #0 · ≤8 scout cho lăng kính (gộp 2 lăng kính/scout nếu cần) + ≤3 scout bổ sung từ #0 + 1 scout gộp — tổng ≤12, chạy theo đợt ≤3 · chi phí ≈ (overhead ~15k + 3–5k việc) × số scout, tính theo giá haiku.
 
 ## Bước 1 — CHỌN LĂNG KÍNH (điều phối viên, ≤2 phút)
 Thư viện dưới đây là GỢI Ý, KHÔNG phải danh sách đóng. Chọn 4–8 lăng kính hợp với việc này, VÀ luôn thêm lăng kính **#0 "lăng kính còn thiếu"**.
@@ -58,4 +58,4 @@ Chủ đề: … · Ngày: … · Kích hoạt vì: … · Lăng kính đã dùn
 
 ## Bước 4 — BIẾN DANH SÁCH THÀNH HÀNH ĐỘNG (không để danh sách nằm chết)
 U# → tiêu chí chấp nhận (brief/SPEC) · R# cao + B# → test case cho builder và dòng Rủi ro của mốc · Q# → giả thuyết `blk` (NC, có kill) hoặc việc tra cứu · A# → CLAUDE.md Quyết định (phương án đã loại + lý do) · R#/B# chưa có test → critic `code`/`ke_hoach` BLOCK (brief critic phải trỏ file phân kỳ) · debug: R#/Q# → danh sách giả thuyết nguyên nhân giao critic `loi`.
-Chi phí tham khảo: 6 scout haiku ≈ 6×(15k overhead + 4k) ≈ 115k tok haiku ≈ 29k quy đổi giá Opus — vẫn rẻ hơn 1 vòng builder làm sai hướng; vì vậy giữ đúng TRẦN.
+Chi phí tham khảo: 6 scout haiku ≈ 6×(15k overhead + 4k) ≈ 115k tok haiku ≈ 3k quy đổi giá Opus (đo thật: 3 scout phân kỳ ≈ $0.03) — rất rẻ so với 1 vòng builder làm sai hướng.
