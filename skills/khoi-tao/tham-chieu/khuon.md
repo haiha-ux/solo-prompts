@@ -22,7 +22,7 @@ Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent:
 - Đường dẫn `.ai/` trong brief luôn TUYỆT ĐỐI (cây chính). ≤3 agent nền cùng lúc (phân kỳ nhiều scout → chạy theo đợt 3); 2 builder song song chỉ khi mỗi người 1 worktree, tập file không giao.
 - Cùng chủ đề → SendMessage agent cũ (rẻ hơn spawn). Chủ đề mới → spawn mới. critic LUÔN spawn mới.
 - Ngân sách tính theo giá: `chi phí = tok × hệ số` (haiku 1 · sonnet 20 · opus 40 nếu haiku là 5.5; 1 · 2 · 4 nếu là 4.5). Phần đắt nhất là CONTEXT CỦA MÌNH: không `cat` cả file tham chiếu dài — đưa đường dẫn cho agent; tự đọc thì chỉ mục cần (`grep -n`, `sed -n a,bp`). Không giới hạn số spawn haiku (trừ trần riêng của phân kỳ); theo dõi tổng: XD/TK ≈ 400k đơn vị/mốc · NC ≈ 800k đơn vị/`/goal`. Vượt → ghi lý do vào STATE; vượt gấp rưỡi → dừng, báo user 1 dòng chi phí.
-- Sau MỖI spawn: append `ngày | vai | việc | tok | đơn vị` (tok từ `subagent_tokens` trong thông báo hoàn thành; không có thì `?`) vào `.ai/chi_phi.log` — 1 lệnh; STATE Chi phí cộng dồn khi xong mốc / `sp:bao-tri`.
+- **Mỗi lượt của mình đọc lại TOÀN BỘ context (~80–110k token) — số lượt mới là chi phí lớn nhất** (đo thật: 35 lượt Opus = $1.84, trong đó 6 lượt chỉ để ghi log). Vì vậy: spawn các agent độc lập trong CÙNG 1 lượt · KHÔNG mở lượt riêng chỉ để ghi sổ/log — ghép vào lệnh Bash cần chạy tiếp theo · `.ai/chi_phi.log` ghi GỘP 1 lệnh khi kết mốc (`ngày | vai | việc | tok | đơn vị` cho mọi spawn trong mốc, tok lấy từ `subagent_tokens`) · không lượt "chờ/kiểm tra" — agent nền tự báo khi xong.
 - Động não PHÂN KỲ → HỘI TỤ theo `.ai/ref/phan_ky.md` khi: yêu cầu mới/mơ hồ, chọn kiến trúc/stack, trước khi build tính năng dùng thật, đóng khung/chốt giả thuyết, mở mốc, lỗi lạ. Danh sách trong đó chỉ là gợi ý — luôn thêm lăng kính "còn thiếu".
 - Chỉ mình ghi STATE, findings, so_cai, CLAUDE.md, MAP.md. Ghi STATE sau mỗi QUYẾT ĐỊNH (gộp nhiều kết quả thành 1 lần ghi).
 - Tin "OK" chỉ khi có lệnh kiểm chứng. Quyết định dựa trên 1 nguồn/1 kết quả → tự mở file gốc đọc có giới hạn.
@@ -32,7 +32,7 @@ Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent:
 ## Tra cứu (kiến thức của model có hạn cắt — trí nhớ về thư viện/API/SOTA mặc định là NGHI VẤN)
 BẮT BUỘC tra (run scout, hoặc dòng INDEX ≤12 tháng mà file run còn tồn tại) TRƯỚC khi: T1 dùng thư viện/API/CLI/model lần đầu hoặc khác phiên bản mục Phiên bản · T2 chọn stack/dịch vụ · T3 lỗi lạ sau 1 lượt fix thất bại (tìm message lỗi nguyên văn + issue/changelog) · T4 khẳng định "chưa ai làm/SOTA/không tồn tại" (≥3 truy vấn khác góc + arXiv/GitHub) · T5 số liệu benchmark, giá, quota, tên/ID model · T6 trước khi chốt giả thuyết `blk`.
 MIỄN T1: stdlib · thư viện ổn định lâu năm dùng API cơ bản (vd requests, pytest, express) → ghi Phiên bản từ lockfile "ổn định, từ lockfile, <ngày>". BẮT tra: thư viện <2 năm tuổi, đổi major, API ít dùng, SDK LLM/cloud/model. GỘP: chọn stack/dựng scaffold → 1 scout tra tất cả dependency một lần.
-Docs/API thư viện → Context7 trước (MCP đi kèm plugin; builder tự tra được); issue/changelog/benchmark/tính mới → web. Mọi tra web → scout (haiku, chạy nền); mình chỉ tự mở 1 URL user đưa.
+Docs/API thư viện → Context7 trước (MCP đi kèm plugin; builder tự tra được); issue/changelog/benchmark/tính mới → web qua Exa (MCP đi kèm, rẻ hơn WebSearch ~70% khi đo thật), lỗi → WebSearch. Mọi tra web → scout (haiku, chạy nền); mình chỉ tự mở 1 URL user đưa.
 
 ## Phiên bản (đã xác minh bằng tra cứu: thư viện | phiên bản | ngày kiểm | run)
 

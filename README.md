@@ -49,7 +49,9 @@ Phân vân → NGHIÊN CỨU khảo sát ngắn (sai hướng build đắt hơn)
 ## Plugin & MCP đi kèm
 - **Context7** (docs thư viện đúng phiên bản) được cài TỰ ĐỘNG cùng plugin (`.mcp.json`, server từ xa, không cần key, chỉ 2 tool; Claude Code hoãn nạp schema MCP nên gần như không tốn context). Builder/scout/critic tra docs ở đây trước, web chỉ khi cần issue/changelog/benchmark.
 - **codegraph** (tra code, giảm token đọc file): CLI cài riêng mỗi máy — `npm i -g @colbymchenry/codegraph` (Node ≥22.5) rồi `codegraph init` trong dự án. Thiếu thì agent dùng grep, hook báo 1 dòng.
-- **Tùy chọn, tự thêm khi cần**: Exa search (nghiên cứu web sâu) `claude mcp add --transport http exa https://mcp.exa.ai/mcp` · arXiv (paper) `claude mcp add arxiv -- uvx arxiv-mcp-server` · Playwright (test trình duyệt) `claude mcp add playwright -- npx @playwright/mcp@latest`.
+- **Exa** (search/fetch web) cũng cài TỰ ĐỘNG cùng plugin (từ xa, không cần key; lỗi/giới hạn → agent tự dùng WebSearch).
+- **Đo thật (2026-10-31, mỗi phép 1 phiên haiku, câu trả lời đúng như nhau)**: Context7 $0.023 vs WebFetch $0.060 (3 câu docs, rẻ hơn ~62%) · Exa $0.022 vs WebSearch $0.072 (2 câu search, rẻ hơn ~70%, ít lượt hơn).
+- **Tùy chọn, tự thêm khi cần**: arXiv (paper) `claude mcp add arxiv -- uvx arxiv-mcp-server` · Playwright (test trình duyệt) `claude mcp add playwright -- npx @playwright/mcp@latest`.
 - **Cố ý KHÔNG dùng**: GitHub MCP (schema rất nặng, `gh` CLI làm được) · Serena (trùng codegraph, nhiều tool, GPL).
 
 ## Câu hỏi thường gặp khi vận hành
@@ -112,8 +114,18 @@ Giám khảo `/goal` là model đọc **transcript**, không đọc file → đi
 | Quy tắc vai | lặp trong mọi prompt | system prompt của agent (0.4–0.9k), nằm trong context agent con, không ở điều phối viên |
 Đo chi phí thật của điều phối: mục Chi phí của STATE + `.ai/chi_phi.log` → `/sp:bao-tri` rà và chỉnh bảng định tuyến / ngân sách.
 
+## Đo thật (2026-10-31, cùng đề bài XD "CLI demtu", claude -p, Opus điều phối)
+| Bản | Haiku | Sonnet | Lượt Opus | Opus $ | Tổng $ | Ghi chú |
+|---|---|---|---|---|---|---|
+| 4.5.0 | 0 | 1 | — | — | 1.00 | Opus tự chạy test, không phân kỳ, bỏ critic |
+| 4.5.2 | 4 | 3 | — | 1.85 | 2.61 | luật cứng: phân kỳ + grunt + critic; critic bắt 2 lỗi thật, 7 → 37 test |
+| 4.5.3 | 6 | 3 | 35 | 1.84 | 2.68 | 6 lượt Opus chỉ để ghi log |
+| 4.6.0 | 5 | 3 | 29 | 1.50 | 2.13 | ghi sổ gộp, spawn cùng lượt |
+NC (giả thuyết sai thật): failing → grunt đối chứng dương + ablation → critic that_bai loại F1–F4 → F5 → refuted kèm bài học + hướng mới · $1.58.
+Chi phí còn lại chủ yếu là context Opus đọc lại mỗi lượt + suy nghĩ của Opus; haiku (alias = Haiku 5.5) chỉ $0.02–0.06 mỗi lần chạy.
+
 ## Chưa kiểm chứng
-- Context7: tên tool `mcp__plugin_sp_context7__*` đã xác nhận bằng phiên chạy thật; chưa đo token so với WebFetch.
+- Context7/Exa: đã đo trên 5 câu hỏi — mẫu nhỏ, kết quả có thể khác với câu hỏi khác; free tier của Exa có thể giới hạn khi dùng nhiều.
 - Ngân sách theo đơn vị giá (400k/800k) và trần phân kỳ là điểm xuất phát — chỉnh theo `.ai/chi_phi.log`.
 - Chưa chạy trọn 1 dự án thật bằng v4. Ngưỡng (≤3 agent nền, ≤80/40/60 dòng, trần vòng) là điểm xuất phát — chỉnh theo log chi phí sau 2–3 phiên.
 - Chưa A/B test với v3.1 trên cùng 1 đề bài.
