@@ -49,8 +49,11 @@ Phân vân → NGHIÊN CỨU khảo sát ngắn (sai hướng build đắt hơn)
 ## Việc NHẸ (tiết kiệm cho việc nhỏ)
 Quy mô S, ≤2 file, không dữ liệu/người dùng thật — hoặc bạn nói "nhẹ"/"dùng 1 lần" → bỏ động não và critic kết mốc, vẫn giữ grunt chạy test. Việc dùng thật/nghiên cứu vẫn chạy quy trình đầy đủ.
 
+## Khi nào KHÔNG cần sp (đo A/B thật, 2026-11-05)
+Cùng đề CLI demtu có giao diện rõ, chấm bằng 12 test ẩn (NFD, CRLF, BOM, file 1 dòng 30MB, sai encoding, file thiếu…): **Opus một mình 12/12, $0.32–0.38** · **sp 12/12, $0.66–0.69**. Việc nhỏ đã rõ → sp tự chọn **TRỰC TIẾP** (không khởi tạo, Opus tự làm). sp đáng tiền ở: nghiên cứu (cứu giả thuyết, tránh bác bỏ sai), dự án nhiều phiên (STATE/brief/khôi phục agent chết), việc có dữ liệu/người dùng thật (critic từng bắt lỗi thật). Ba mức: TRỰC TIẾP · VỪA (phân kỳ gọn + 1 critic) · ĐẦY ĐỦ. Kiểm v4.10.0 cùng đề: `/sp:khoi-tao` tự chọn TRỰC TIẾP → 12/12, **$0.43**, 5 lượt Opus, không tạo `.ai/` (sp 4.9.0 cũ: $0.66–0.69).
+
 ## Ràng buộc bằng hook (không chỉ bằng chữ)
-- `hooks/guard.js` (PreToolUse): trong dự án sp, **phiên chính** chạy lệnh test (pytest, npm test, node --test, go test, cargo test…) hoặc search/fetch web → bị TỪ CHỐI, kèm hướng dẫn giao `sp:grunt`/`sp:scout`. Agent con (hook input có `agent_id`) luôn được qua. Van thoát: cùng mục tiêu bị chặn 2 lần thì lần 3 cho qua. Lỗi → cho qua.
+- `hooks/guard.js` (PreToolUse): trong dự án sp, **phiên chính** chạy lệnh test (pytest, uv/poetry run, npm/pnpm/yarn/bun test, make test, tox, go/cargo/dotnet test, node --test, playwright…; bộ `hooks/guard.test.js` 29 ca chặn + 15 ca không chặn) hoặc search/fetch web → bị TỪ CHỐI, kèm hướng dẫn giao `sp:grunt`/`sp:scout`. Agent con (hook input có `agent_id`) luôn được qua. Van thoát: cùng mục tiêu bị chặn 2 lần thì lần 3 cho qua. Lỗi → cho qua.
 - `hooks/probe.js` (SessionStart): nạp sẵn `[sp brief]` = STATE + git log/status + findings (≤8k ký tự) → `/sp:tiep-tuc` không phải đọc lại.
 - Ghi công: ý tưởng phân biệt phiên chính/agent con bằng `agent_id`, brief đầu phiên, kickoff nhẹ và các số đo giới hạn codegraph lấy từ plugin **crew** — [HYPIAN](https://github.com/TianAn2411/HYPIAN) (An Thien Truong, MIT). Không lấy: memory DB, daemon, đa vai trò (nặng, chưa thử trên Windows, ở quy mô solo ngang grep theo chính số đo của họ).
 

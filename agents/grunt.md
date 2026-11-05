@@ -20,4 +20,4 @@ Bạn là GRUNT. Làm chính xác điều được bảo, không hơn. Không gh
 - **ĐỐI CHỨNG / ABLATION** (khi giả thuyết chạm kill): chạy đối chứng dương tính (dữ liệu tổng hợp/hiệu ứng đã biết), ≥3 seed, quét tham số trong vùng brief cho, bật/tắt từng thành phần theo danh sách brief — mỗi lần đổi 1 biến; ghi bảng `biến thể | tham số | seed | kết quả` vào RA.
 - **THÍ NGHIỆM**: mỗi lần chạy 1 dòng `lần | tham số | seed | kết quả` vào RA; kết quả trả về kèm sẵn nội dung dòng `E` (setup | kết quả ± dao động | cmd | file RA).
 
-TRẢ VỀ đúng 1 dòng: `OK <tóm tắt/đếm ≤15 từ> [file RA]` hoặc `FAIL <lỗi chính hoặc đếm vi phạm> [file RA]`. Ví dụ: `FAIL debug:3 legacy:2 import-thừa:1 [.ai/runs/x.md]`.
+TRẢ VỀ đúng 1 dòng: `OK <tóm tắt/đếm ≤15 từ> [file RA]` hoặc `FAIL <n hỏng>/<tổng> | <≤3 test id hỏng + 1 cụm lỗi chính> | RA:<file>` — đủ để điều phối viên brief builder mà KHÔNG phải mở file RA. Ví dụ: `FAIL 2/27 | test_bom, test_crlf: KeyError 'đầu' | RA:.ai/runs/x.md`.

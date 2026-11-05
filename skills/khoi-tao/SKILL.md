@@ -24,7 +24,7 @@ File theo quy mô/chế độ: do `sp:chuyen` ĐẢM BẢO (bảng quy mô trong
 Có code và có lệnh `codegraph` nhưng chưa có `.codegraph/` → `codegraph init`. Tool MCP `codegraph_explore` (tham số `projectPath` = thư mục gốc dự án) chưa xuất hiện trong phiên → dùng CLI `codegraph explore "<câu hỏi>"`. Chưa cài → Grep/Glob, ghi 1 dòng gợi ý cài vào Gotchas; KHÔNG tự cài global.
 
 ## 4. Bắt đầu
-Việc NHẸ (phan_loai.md: S, ≤2 file, không dữ liệu/người dùng thật, hoặc user nói "nhẹ"/"dùng 1 lần") → KHÔNG gọi `sp:chuyen`/`sp:xay-dung` (đo ở crew: rẻ hơn ~53%): ghi STATE `Chế độ: XÂY DỰNG` + việc `nhẹ`, giao `sp:builder` 1 lần, `sp:grunt` chạy test, in dòng ĐỊNH TUYẾN, xong.
+Việc TRỰC TIẾP (phan_loai.md: việc nhỏ, đã rõ yêu cầu, không dữ liệu/người dùng thật, hoặc user nói "nhẹ"/"nhanh"/"dùng 1 lần") → KHÔNG khởi tạo sp: không tạo `.ai/`, không spawn agent — tự viết + tự chạy test như Opus thường (hook guard chỉ áp dụng khi có `.ai/STATE.md`). A/B thật trên CLI demtu: Opus một mình 12/12 test ẩn với $0.32–0.38, quy trình sp 12/12 với $0.66–0.69. Báo user 1 dòng "làm trực tiếp, không cần sp"; muốn quy trình đầy đủ thì user nói.
 Gọi `sp:chuyen <chế độ> khởi tạo` (chưa có chế độ chính → chuyển chính: chạy ĐẢM BẢO của chế độ đó, ghi STATE, trả quyền). Rồi gọi skill theo bảng "Chế độ → skill" trong `phan_loai.md`, làm vòng đầu tiên, đề xuất 1 câu `/goal` (`.ai/ref/goal.md` / `goal_nghien_cuu.md`). Đổi hướng về sau: `/sp:chuyen` hoặc nói tự nhiên.
 
 YÊU CẦU CỦA USER:

@@ -5,7 +5,7 @@
 2. Có ít nhất 1 điều cốt lõi CHƯA ai chứng minh khả thi, hoặc phải tra cứu/thử nghiệm mới biết cách làm? → **NC**
 3. Viết được ngay ≥3 tiêu chí chấp nhận kiểm bằng lệnh/test, mọi thành phần đã biết cách làm? → **XD**. Đã biết cách làm nhưng yêu cầu mơ hồ → XD, tự viết 3 tiêu chí, báo user.
 Phân vân 2 vs 3 → NC, bắt đầu bằng 1 `/goal` khảo sát ngắn.
-XD nhỏ, rủi ro thấp (script dùng 1 lần, ≤2 file, không dữ liệu/người dùng thật) → XD + đánh dấu việc `nhẹ` (xem `sp:xay-dung` mục Việc NHẸ). Đoán → `tin_cay: thấp`; hỏi user ĐÚNG 1 câu chỉ khi sai sẽ tốn lớn.
+Việc nhỏ, đã rõ yêu cầu, không dữ liệu/người dùng thật → **TRỰC TIẾP** (không vào sp, Opus tự làm — đo A/B: chất lượng ngang, rẻ ~2×). Việc S/M không chạm auth/tiền/dữ liệu nhạy cảm → XD mức **VỪA** (xem `sp:xay-dung`). Còn lại → XD đầy đủ.
 
 ## Yêu cầu mới trên dự án đã có chế độ chính
 | Yêu cầu mới | Chế độ chính hiện tại | Làm gì |

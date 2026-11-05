@@ -8,7 +8,7 @@ description: "Vòng nghiên cứu giả thuyết → bằng chứng/thí nghiệ
 1. **Đóng khung = phân kỳ trước**: chưa có `.ai/phan_ky/<nhóm>.md` → spawn `sp:scout` CHẾ ĐỘ phan_ky ≥3 lăng kính + #0 trong CÙNG 1 lượt; chưa có file đó thì KHÔNG ghi dòng H.
 2. **Mình không tự chạy lệnh thí nghiệm/đo/ablation** → `sp:grunt`. Không tự search web → `sp:scout`.
 3. **Chạm kill → bước 3b** (failing → grunt đối chứng/ablation → critic `that_bai`). Trước MỌI dòng `V … refuted` chạy `node "${CLAUDE_PLUGIN_ROOT}/hooks/lint_so_cai.js"` và in kết quả; lint báo lỗi thì KHÔNG ghi refuted.
-4. **Chốt confirmed/refuted** chỉ sau khi critic `gia_thuyet` trả KẾT.
+4. **Chốt confirmed/refuted** chỉ sau khi critic `gia_thuyet` trả KẾT. **Confirmed** còn phải qua TÁI LẬP SẠCH: 1 `sp:grunt` chạy lại `cmd` từ checkout sạch (`git stash -u` / worktree mới), seed mới, ghi dòng `E` thứ hai — lệch ngoài dung sai → không được confirmed. ≥3 giả thuyết cùng chủ đề → critic nêu rủi ro "thử nhiều lần mới trúng".
 5. Kết mỗi `/goal` in `ĐỊNH TUYẾN: haiku n · sonnet m · tự chạy k` + output của `node "${CLAUDE_PLUGIN_ROOT}/hooks/lint_so_cai.js"`.
 
 ## File (trong `.ai/`, chỉ điều phối viên ghi)
@@ -26,7 +26,7 @@ Chạm 60 dòng → gộp Đường chết/Đã chốt cũ thành cụm theo ch�
 
 **`so_cai.md`** — sổ cái append-only, KHÔNG đọc cả file. Tra đúng id: `grep "H7 |" .ai/so_cai.md` (dấu ` |` để H7 không khớp H70). Tra theo nội dung: `grep -i "<từ khóa>"`.
 ```
-H7 | <giả thuyết đo được> | lõi:<điều cốt lõi> | phụ trợ:<giả định đi kèm> | kill: <điều kiện bác bỏ, viết TRƯỚC khi thử> | test: <cách kiểm, ngưỡng, dung sai> | blk | scope:<thành phần — chỉ khi thuộc luồng phụ>
+H7 | <giả thuyết đo được> | lõi:<điều cốt lõi> | phụ trợ:<giả định đi kèm> | kill: <điều kiện bác bỏ, viết TRƯỚC khi thử> | test: <cách kiểm, ngưỡng, dung sai> | n:<số lần lặp/seed CỐ ĐỊNH trước khi chạy> | blk | scope:<thành phần — chỉ khi thuộc luồng phụ>
 E12 | H7 | <setup: commit, tham số, seed> | <kết quả số ± dao động qua các lần chạy lại> | cmd: <lệnh tái lập> | runs/<file>
 V | H7 | failing|confirmed|refuted|parked | <lý do 1 câu> | <bằng chứng: E12, runs/<file>#S3> | lesson:<bắt buộc khi refuted>
 F7 | H7 | F1..F5 | <bằng chứng: E12, runs/x> | giả định ngầm:<…> | đề xuất:<H7.1,H7.2>

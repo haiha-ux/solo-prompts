@@ -41,3 +41,5 @@ REUSE/DOCS (L): <dòng thêm .ai/reuse.md | docs đã sửa | không>
 GOTCHA/NỢ: <1 dòng | không>
 CHẶN: <không | THIẾU KIẾN THỨC: <điều chưa biết cách làm> | CẦN TRA CỨU: <lib@ver — câu hỏi> | CẦN GRUNT: <việc cơ học>>  (KHÔNG tự gọi agent khác)
 ~~~
+
+Còn ≤5 lượt trước `maxTurns`: dừng việc mới, commit WIP (builder), trả NGAY khối báo cáo có nhãn với `CHẶN: HẾT LƯỢT — đã xong: … / còn: …` — không để bị cắt mất báo cáo.

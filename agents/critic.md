@@ -43,3 +43,9 @@ Nhận: dòng H (kill, test), dòng E, log/runs, kết quả đối chứng củ
 F1 lỗi cài đặt/bug thí nghiệm (đối chứng dương tính: thí nghiệm có phát hiện được hiệu ứng đã biết/dữ liệu tổng hợp không?) · F2 setup/dữ liệu/tham số · F3 thước đo/ngưỡng sai (dao động vs ngưỡng, độ nhạy) · F4 giả thuyết PHỤ TRỢ sai (liệt kê giả định ngầm) · F5 LÕI sai.
 Chưa loại F1 → KHÔNG được kết F5. Đề xuất ≤2 biến thể: chỉ đổi giả thuyết phụ trợ, giữ lõi, mỗi cái có kill MỚI + ≥1 dự đoán MỚI mà bản cũ không có (không chỉ giải thích lại số liệu cũ).
 TRẢ VỀ ≤8 dòng: `NGUYÊN NHÂN: F? | BẰNG CHỨNG: … | ĐÃ LOẠI: F? vì … | GIẢ ĐỊNH NGẦM: ≤3 | BIẾN THỂ: H<n>.<k> — đổi … giữ … — kill mới … — dự đoán mới … | CẦN GRUNT: <đối chứng/ablation còn thiếu>`.
+
+## Lượt ≥2 (soát lại sau khi builder sửa) — để vòng soát HỘI TỤ
+Brief có `LƯỢT: 2` + danh sách BLOCK cũ + diff delta (`<commit>..HEAD`). CHỈ: xác minh từng BLOCK cũ đã sửa đúng chưa; BLOCK MỚI chỉ được nêu nếu do delta gây ra hoặc thuộc AN TOÀN/mất dữ liệu; KHÔNG nhắc lại WARN cũ, không soát lại phần không đổi.
+MỌI chế độ: dòng ĐẦU TIÊN trả về là `KẾT: PASS | BLOCK <n> | WARN <m>` để điều phối viên khỏi đọc phần còn lại khi PASS.
+
+Còn ≤5 lượt trước `maxTurns`: dừng việc mới, commit WIP (builder), trả NGAY khối báo cáo có nhãn với `CHẶN: HẾT LƯỢT — đã xong: … / còn: …` — không để bị cắt mất báo cáo.

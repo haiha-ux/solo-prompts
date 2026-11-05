@@ -54,8 +54,10 @@ if (['startup', 'resume', 'clear', ''].includes(input.source || '')) {
   const rdf = (p) => { try { return fs.readFileSync(path.join(project, p), 'utf8').replace(/\r\n/g, '\n'); } catch { return ''; } };
   const git = (a) => { try { return execSync('git ' + a, { cwd: project, encoding: 'utf8', timeout: 3000, stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return ''; } };
   const state = rdf('.ai/STATE.md');
-  let b = '[sp brief — đã nạp sẵn, KHÔNG cat lại]\n## .ai/STATE.md\n' + cap(state, 4000) +
-    '\n## git log -5\n' + git('log --oneline -5') + '\n## git status --short\n' + cap(git('status --short'), 1200);
+  const st = state.length > 4000 ? state.slice(0, 1500) + '\n…(lược giữa)…\n' + state.slice(-2400) : state;
+  const lg = git('log --oneline -5'), gs = git('status --short');
+  let b = '[sp brief — đã nạp sẵn, KHÔNG cat lại]\n## .ai/STATE.md\n' + st +
+    (lg ? '\n## git log -5\n' + lg : '') + (gs ? '\n## git status --short\n' + cap(gs, 1200) : '');
   if (/NGHIÊN CỨU|Luồng phụ: NC/.test(state)) b += '\n## .ai/findings.md\n' + cap(rdf('.ai/findings.md'), 2500);
   notes.push(cap(b, 8000));
 }
