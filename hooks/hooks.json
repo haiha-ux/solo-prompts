@@ -7,8 +7,25 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/probe.js"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/probe.js"
+            ],
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell|WebSearch|WebFetch|mcp__plugin_sp_exa__web_search_exa|mcp__plugin_sp_exa__web_fetch_exa",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/guard.js"
+            ],
+            "timeout": 5
           }
         ]
       }

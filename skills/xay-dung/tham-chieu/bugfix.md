@@ -3,7 +3,7 @@
 1. **TÁI HIỆN** — grunt (haiku) chạy test/lệnh tái hiện và ghi output vào runs/; PHẢI đỏ. Không đỏ = chưa hiểu đúng lỗi.
 2. **THU HẸP** — xác định tầng (bảng trong `kien_truc.md`) → file → hàm → dòng (binary search, log ở đầu vào/đầu ra của tầng nghi ngờ, test cô lập từng phần). Không nhảy sang tầng khác trước khi loại trừ tầng hiện tại.
 3. **ROOT CAUSE** — hỏi "tại sao?" đến khi không hỏi được nữa. Có fallback → test TỪNG nhánh.
-4. **PHẠM VI** — codegraph (MCP/CLI nếu có) hoặc grep liệt kê mọi call site; tìm chỗ copy-paste cùng lỗi ở module khác. Liệt kê TẤT CẢ chỗ phải sửa trước khi sửa.
+4. **PHẠM VI** — codegraph (MCP/CLI nếu có) VÀ grep liệt kê mọi call site (codegraph có thể sót: cắt ở ~20, alias/macro); tìm chỗ copy-paste cùng lỗi ở module khác. Liệt kê TẤT CẢ chỗ phải sửa trước khi sửa.
 5. **FIX** — đúng gốc, ở mọi chỗ bước 4; phẫu thuật tối thiểu, không refactor tiện tay.
 6. **HỒI QUY** — chạy TOÀN BỘ test; vỡ test khác → quay lại bước 3.
 7. **ROLLBACK** (L hoặc fix phức tạp) — ghi cách revert (commit hash / bước) vào nhật ký STATE.

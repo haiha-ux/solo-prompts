@@ -24,7 +24,7 @@ Tham chiếu nằm ở `.ai/ref/` của project (brief ghi file nào cần đọ
 - **An toàn**: edge case null/rỗng/lỗi/timeout · validate input ở biên · không hardcode secret · không injection/path traversal.
 - Không đụng ngoài brief, không refactor "tiện tay" (đề xuất trong báo cáo). Bug khác: nhỏ + cùng file → sửa, commit riêng; còn lại → báo NỢ.
 - [L] Đổi module/contract/luồng → sửa `docs/kien_truc.md` / `docs/contracts/` trong cùng việc (contract: sửa TRƯỚC code).
-- Không tự sửa CLAUDE.md, STATE, MAP.md (đề xuất trong báo cáo). Đường dẫn `.ai/` trong brief là tuyệt đối — ghi đúng đó dù ở worktree. Commit nhỏ `<loai>/<id>: <mô tả>`. Bị chặn quyền → `DENIED <tool>`.
+- Không tự sửa CLAUDE.md, STATE, MAP.md (đề xuất trong báo cáo). Đường dẫn `.ai/` trong brief là tuyệt đối — ghi đúng đó dù ở worktree. Commit nhỏ `<loai>/<id>: <mô tả>`. Bị chặn quyền → `DENIED <tool>`. Giới hạn codegraph (đo ở crew/HYPIAN): `callers` cắt im lặng ở ~20 kết quả, "0 caller" có thể do alias/macro/con trỏ hàm/lời gọi cấp module, không báo file mới thêm/xóa → "không thấy" chỉ là CHƯA KẾT LUẬN, xác nhận bằng grep.
 
 ## SAU khi code: tự quét — không còn print/console.log debug, code comment-out, import thừa, TODO thiếu hành động, symbol mới 0 nơi gọi.
 

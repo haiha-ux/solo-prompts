@@ -48,6 +48,17 @@ if ((input.source || 'startup') === 'startup') {
   const missing = ['codegraph', 'gh'].filter((c) => !has(c));
   if (missing.length) notes.push(`[sp] máy thiếu: ${missing.join(', ')} → ${missing.includes('codegraph') ? 'dùng grep/git ls-files thay codegraph; ' : ''}${missing.includes('gh') ? 'không tạo PR/repo bằng gh.' : ''}`);
 }
+// Brief đầu phiên (ý tưởng sp_brief của crew/HYPIAN, đo: resume rẻ hơn ~26%): đưa sẵn STATE + git + findings → skill không phải `cat` lại.
+if (['startup', 'resume', 'clear', ''].includes(input.source || '')) {
+  const cap = (t, n) => (t.length > n ? t.slice(0, n) + '\n…(cắt)' : t);
+  const rdf = (p) => { try { return fs.readFileSync(path.join(project, p), 'utf8').replace(/\r\n/g, '\n'); } catch { return ''; } };
+  const git = (a) => { try { return execSync('git ' + a, { cwd: project, encoding: 'utf8', timeout: 3000, stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return ''; } };
+  const state = rdf('.ai/STATE.md');
+  let b = '[sp brief — đã nạp sẵn, KHÔNG cat lại]\n## .ai/STATE.md\n' + cap(state, 4000) +
+    '\n## git log -5\n' + git('log --oneline -5') + '\n## git status --short\n' + cap(git('status --short'), 1200);
+  if (/NGHIÊN CỨU|Luồng phụ: NC/.test(state)) b += '\n## .ai/findings.md\n' + cap(rdf('.ai/findings.md'), 2500);
+  notes.push(cap(b, 8000));
+}
 if (input.source === 'compact') {
   let mode = '';
   try { mode = (fs.readFileSync(path.join(project, '.ai', 'STATE.md'), 'utf8').match(/Chế độ:\s*([^\n]*?)(?:\s{2,}|$)/m) || [])[1] || ''; } catch { /* bỏ qua */ }

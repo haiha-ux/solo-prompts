@@ -49,6 +49,11 @@ Phân vân → NGHIÊN CỨU khảo sát ngắn (sai hướng build đắt hơn)
 ## Việc NHẸ (tiết kiệm cho việc nhỏ)
 Quy mô S, ≤2 file, không dữ liệu/người dùng thật — hoặc bạn nói "nhẹ"/"dùng 1 lần" → bỏ động não và critic kết mốc, vẫn giữ grunt chạy test. Việc dùng thật/nghiên cứu vẫn chạy quy trình đầy đủ.
 
+## Ràng buộc bằng hook (không chỉ bằng chữ)
+- `hooks/guard.js` (PreToolUse): trong dự án sp, **phiên chính** chạy lệnh test (pytest, npm test, node --test, go test, cargo test…) hoặc search/fetch web → bị TỪ CHỐI, kèm hướng dẫn giao `sp:grunt`/`sp:scout`. Agent con (hook input có `agent_id`) luôn được qua. Van thoát: cùng mục tiêu bị chặn 2 lần thì lần 3 cho qua. Lỗi → cho qua.
+- `hooks/probe.js` (SessionStart): nạp sẵn `[sp brief]` = STATE + git log/status + findings (≤8k ký tự) → `/sp:tiep-tuc` không phải đọc lại.
+- Ghi công: ý tưởng phân biệt phiên chính/agent con bằng `agent_id`, brief đầu phiên, kickoff nhẹ và các số đo giới hạn codegraph lấy từ plugin **crew** — [HYPIAN](https://github.com/TianAn2411/HYPIAN) (An Thien Truong, MIT). Không lấy: memory DB, daemon, đa vai trò (nặng, chưa thử trên Windows, ở quy mô solo ngang grep theo chính số đo của họ).
+
 ## Plugin & MCP đi kèm
 - **Context7** (docs thư viện đúng phiên bản) được cài TỰ ĐỘNG cùng plugin (`.mcp.json`, server từ xa, không cần key, chỉ 2 tool; Claude Code hoãn nạp schema MCP nên gần như không tốn context). Builder/scout/critic tra docs ở đây trước, web chỉ khi cần issue/changelog/benchmark.
 - **codegraph** (tra code, giảm token đọc file): CLI cài riêng mỗi máy — `npm i -g @colbymchenry/codegraph` (Node ≥22.5) rồi `codegraph init` trong dự án. Thiếu thì agent dùng grep, hook báo 1 dòng.
@@ -132,6 +137,7 @@ v4.7.1 NC (join vs +=): phân kỳ trước khi ghi H → kill viết trước �
 v4.7.1 luồng phụ (tiếp tục phiên cũ): khôi phục 2 agent chết từ STATE → hỏi user 1 quyết định thật (đăng ký dataset) → H3 failing → biến thể H3.1 có dự đoán mới → vẫn hụt → PARKED (không refuted vì nguyên nhân F2 quy mô corpus chưa loại) kèm điều kiện mở lại → đóng luồng phụ sau 3/3 vòng, giữ XÂY DỰNG · lint 0 lỗi · $3.08.
 Chạy không giao diện (`claude -p`) với thí nghiệm dài: đặt `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`, nếu không agent nền chạy >10 phút sau lượt cuối sẽ bị dừng.
 v4.8.1 (bản chốt): việc NHẸ (script dùng 1 lần) → builder + grunt, 8 lượt Opus, $0.77, 6 test xanh · XD đầy đủ "demtu" → 3 scout phân kỳ + builder + 2 grunt + 2 critic, 47 test xanh, $2.86 (Opus $1.66). Đo thêm: Context7 rẻ hơn WebFetch ~57% (7 câu), Exa rẻ hơn WebSearch ~73% (5 câu).
+v4.9.0 (tích hợp từ HYPIAN): hook `guard.js` kiểm trong phiên thật — phiên chính gọi pytest bị CHẶN và tự chuyển sang sp:grunt (chạy được); agent con chạy cùng lệnh được qua · việc NHẸ $0.70 (8 lượt Opus, 4 test xanh) · XD đầy đủ $3.49 (6 haiku + builder + 3 critic, 27 test xanh; chi phí dao động giữa các lần chạy $2.1–3.5).
 Chi phí còn lại chủ yếu là context Opus đọc lại mỗi lượt + suy nghĩ của Opus; haiku (alias = Haiku 5.5) chỉ $0.02–0.06 mỗi lần chạy.
 
 ## Chưa kiểm chứng

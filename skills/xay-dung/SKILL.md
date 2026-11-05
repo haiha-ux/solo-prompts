@@ -12,7 +12,7 @@ Brief cho builder/critic ghi tên file tham chiếu cần đọc (`.ai/ref/<file
 Việc là NHẸ khi ĐỦ CẢ: quy mô S · ≤2 file · không có người dùng/dữ liệu thật/tiền/bảo mật · user không yêu cầu dùng lâu dài — HOẶC user nói "nhẹ"/"nhanh"/"dùng 1 lần". Ghi `nhẹ` cạnh việc trong STATE.
 Việc NHẸ: bỏ LUẬT CỨNG 2 (phân kỳ) và 3 (critic kết mốc); GIỮ LUẬT CỨNG 1 (grunt chạy test) và 4 (dòng ĐỊNH TUYẾN). Giao builder 1 lần, grunt kiểm chứng, xong. Phát sinh rủi ro thật giữa chừng → bỏ nhãn `nhẹ`, chạy đủ.
 
-## LUẬT CỨNG (đã thấy Opus bỏ qua khi chạy thật — KHÔNG được tự miễn trừ mục Việc NHẸ ở trên; vi phạm = làm lại bước đó)
+## LUẬT CỨNG (đã thấy Opus bỏ qua khi chạy thật — ngoại lệ DUY NHẤT: việc có nhãn `nhẹ` được bỏ luật 2 và 3; vi phạm = làm lại bước đó. Luật 1 còn được hook `guard.js` CHẶN thật: phiên chính chạy lệnh test sẽ bị từ chối)
 1. **Mình KHÔNG tự chạy** test / benchmark / lint / build / sinh dữ liệu thử / grep nhiều file. Mọi lệnh kiểm chứng → `Agent(subagent_type: "sp:grunt")`. Được tự chạy: `git status|diff|log`, `ls`, đọc ≤2 file, ghi sổ `.ai/`.
 2. **Việc đầu tiên của MỖI mốc** (kể cả mốc 1 ngay sau khởi tạo, kể cả dự án S) → PHÂN KỲ TRƯỚC khi giao builder: đọc `.ai/ref/phan_ky.md`, spawn `sp:scout` CHẾ ĐỘ phan_ky ≥3 lăng kính + #0 → `.ai/phan_ky/<mốc>.md` → U#/R#/B# vào tiêu chí + brief builder. Chỉ bỏ khi file phân kỳ của mốc này đã có.
 3. **Kết mốc** → `sp:critic` CHẾ ĐỘ code trên TOÀN diff của mốc (VÀO có file phân kỳ) — luôn, không miễn vì "diff nhỏ".
