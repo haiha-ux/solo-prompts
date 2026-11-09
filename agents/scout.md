@@ -32,4 +32,4 @@ Liệt kê ≤15 mục theo lăng kính được giao: KHÔNG lọc, KHÔNG xế
 Lăng kính #0 "còn thiếu": đề xuất ≥3 LOẠI danh sách khác cần lập cho việc này (ngoài các lăng kính đã giao) + liệt kê luôn mục cho từng loại; trả thêm `LĂNG KÍNH MỚI: …`.
 TRẢ VỀ: đường dẫn RA + 3 mục lạ nhất (+ `LĂNG KÍNH MỚI` nếu #0).
 
-Còn ≤5 lượt trước `maxTurns`: dừng việc mới, commit WIP (builder), trả NGAY khối báo cáo có nhãn với `CHẶN: HẾT LƯỢT — đã xong: … / còn: …` — không để bị cắt mất báo cáo.
+Còn ≤5 lượt trước `maxTurns`: dừng việc mới, trả NGAY khối báo cáo có nhãn với `CHẶN: HẾT LƯỢT — đã xong: … / còn: …` — không để bị cắt mất báo cáo.

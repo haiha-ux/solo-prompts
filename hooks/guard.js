@@ -74,7 +74,11 @@ function main() {
   }
   if (tool === 'Agent' || tool === 'Task') {
     // Agent dựng sẵn chạy trên model phiên chính (Opus) — docs sub-agents: Explore/Plan/general-purpose kế thừa model.
-    if (!OPUS_BUILTIN.has(String(ti.subagent_type || 'general-purpose')) || /^(haiku|sonnet)$/i.test(String(ti.model || ''))) return;
+    if (!OPUS_BUILTIN.has(String(ti.subagent_type || 'general-purpose')) || /^(haiku|sonnet)$/i.test(String(ti.model || ''))) {
+      const d = require('./effort.js').decide(ti.subagent_type, ti.prompt, ti.effort);
+      if (d) process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'allow', updatedInput: { ...ti, effort: d.effort }, additionalContext: `[sp effort] ${ti.subagent_type} → ${d.effort} (${d.why})` } }));
+      return;
+    }
     if (bump(input.session_id, 'agent:' + h(ti.description || ti.prompt)) > 2) return;
     return deny(`[sp] agent dựng sẵn "${ti.subagent_type || 'general-purpose'}" chạy trên Opus (đắt ~40× haiku). Dùng sp:scout (tìm/đọc/tra cứu), sp:grunt (lệnh), sp:builder (code), sp:critic (soát) — hoặc truyền model: "haiku"/"sonnet". (Bị chặn 2 lần cùng việc thì lần 3 được qua.)`);
   }

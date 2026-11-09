@@ -46,8 +46,10 @@ Phân vân → NGHIÊN CỨU khảo sát ngắn (sai hướng build đắt hơn)
 - Gọi lại `/sp:khoi-tao <yêu cầu mới>` trên dự án có sẵn: không ghi đè, cùng chế độ thì thêm việc, khác chế độ thì `sp:chuyen`.
 - Agent tự ĐỀ XUẤT chuyển khi: cổng NC đủ · việc bị chặn 2 lần vì điều chưa biết · spike sụp · luồng phụ quá 3 vòng.
 
-## Việc NHẸ (tiết kiệm cho việc nhỏ)
-Quy mô S, ≤2 file, không dữ liệu/người dùng thật — hoặc bạn nói "nhẹ"/"dùng 1 lần" → bỏ động não và critic kết mốc, vẫn giữ grunt chạy test. Việc dùng thật/nghiên cứu vẫn chạy quy trình đầy đủ.
+## Việc nhỏ (mức TRỰC TIẾP / VỪA)
+- TRỰC TIẾP: việc nhỏ đã rõ, không dữ liệu/người dùng thật, hoặc bạn nói "nhẹ"/"dùng 1 lần" → Opus tự làm, không `.ai/`, không agent.
+- VỪA: S/M không chạm vùng nhạy cảm → 1 scout phân kỳ gọn + 1 critic kết mốc.
+- Việc dùng thật/nghiên cứu vẫn chạy quy trình ĐẦY ĐỦ.
 
 ## Khi nào KHÔNG cần sp (đo A/B thật, 2026-11-05)
 Cùng đề CLI demtu có giao diện rõ, chấm bằng 12 test ẩn (NFD, CRLF, BOM, file 1 dòng 30MB, sai encoding, file thiếu…): **Opus một mình 12/12, $0.32–0.38** · **sp 12/12, $0.66–0.69**. Việc nhỏ đã rõ → sp tự chọn **TRỰC TIẾP** (không khởi tạo, Opus tự làm). sp đáng tiền ở: nghiên cứu (cứu giả thuyết, tránh bác bỏ sai), dự án nhiều phiên (STATE/brief/khôi phục agent chết), việc có dữ liệu/người dùng thật (critic từng bắt lỗi thật). Ba mức: TRỰC TIẾP · VỪA (phân kỳ gọn + 1 critic) · ĐẦY ĐỦ. Kiểm v4.10.0 cùng đề: `/sp:khoi-tao` tự chọn TRỰC TIẾP → 12/12, **$0.43**, 5 lượt Opus, không tạo `.ai/` (sp 4.9.0 cũ: $0.66–0.69).
@@ -58,6 +60,17 @@ Cùng đề CLI demtu có giao diện rõ, chấm bằng 12 test ẩn (NFD, CRLF
 - `hooks/guard.js` (PreToolUse): trong dự án sp, **phiên chính** chạy lệnh test (pytest, uv/poetry run, npm/pnpm/yarn/bun test, make test, tox, go/cargo/dotnet test, node --test, playwright…; bộ `hooks/guard.test.js` 29 ca chặn + 15 ca không chặn) hoặc search/fetch web → bị TỪ CHỐI, kèm hướng dẫn giao `sp:grunt`/`sp:scout`. Agent con (hook input có `agent_id`) luôn được qua. Van thoát: cùng mục tiêu bị chặn 2 lần thì lần 3 cho qua. Lỗi → cho qua.
 - `guard.js` còn chặn phiên chính spawn agent dựng sẵn `Explore` / `general-purpose` / `Plan` (chạy trên model phiên chính = Opus) → dùng `sp:scout`/`sp:grunt`/`sp:builder`/`sp:critic`, hoặc truyền `model: "haiku"|"sonnet"`.
 - `hooks/gate.js` (SubagentStop, v4.11): báo cáo sai khuôn bị trả về agent để sửa ngay, trước khi tới Opus. Áp cho builder (thiếu nhãn), critic (dòng đầu không phải `KẾT:`) và grunt (không phải 1 dòng `OK|FAIL`). Mỗi agent chỉ bị trả về 1 lần, có lỗi thì hook cho qua. Bộ test: `node --test hooks/gate.test.js`.
+- `hooks/effort.js` (gọi từ guard.js khi phiên chính spawn agent, v4.12): tự đặt `effort` cho từng lần spawn theo dòng `CHẾ ĐỘ:`/`LƯỢT:` có sẵn trong brief. Tốn 0 token Opus, không thêm luật chữ. Đã kiểm thật trong transcript agent con.
+  | Tình huống | effort | Lý do |
+  |---|---|---|
+  | critic `that_bai` · critic `loi` từ `LƯỢT: 2` | xhigh | bác bỏ sai/sửa sai lần 2 là chỗ đắt nhất |
+  | critic `suc_khoe`, `kien_truc` · critic `LƯỢT ≥2` không dính an toàn | medium | đối chiếu bảng / chỉ xác minh BLOCK cũ |
+  | critic còn lại | high (frontmatter) | Opus chỉ được NÂNG, truyền thấp hơn sẽ bị đưa lên high |
+  | builder `LƯỢT ≥2` / `HẾT LƯỢT` · code `thi_nghiem/` · auth/thanh toán/migration | high | bug thí nghiệm (F1) làm hỏng kết luận; làm lại phải nghĩ sâu hơn |
+  | builder còn lại | medium (Opus tự truyền thì giữ của Opus, vd low cho docs) | |
+  | scout, grunt | low, không đổi | đa dạng nhờ fan-out; việc cơ học |
+
+  Muốn nâng effort khi sửa lại thì spawn agent MỚI kèm `LƯỢT: n` (resume bằng SendMessage giữ effort cũ). Biến môi trường `CLAUDE_CODE_EFFORT_LEVEL` của user đè tất cả.
 - `hooks/probe.js` (SessionStart): nạp sẵn `[sp brief]` = STATE + git log/status + findings (≤8k ký tự) → `/sp:tiep-tuc` không phải đọc lại. Từ v4.11, hook này cũng:
   - đặt tên phiên `sp <chế độ> · <dự án>`;
   - khi resume lúc cache đã hết hạn và context >60k token: báo số token và số tiền sẽ ghi lại, gợi ý `/clear` + `/sp:tiep-tuc` cho rẻ hơn;

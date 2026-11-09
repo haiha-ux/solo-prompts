@@ -48,4 +48,4 @@ TRẢ VỀ ≤8 dòng: `NGUYÊN NHÂN: F? | BẰNG CHỨNG: … | ĐÃ LOẠI: F
 Brief có `LƯỢT: 2` + danh sách BLOCK cũ + diff delta (`<commit>..HEAD`). CHỈ: xác minh từng BLOCK cũ đã sửa đúng chưa; BLOCK MỚI chỉ được nêu nếu do delta gây ra hoặc thuộc AN TOÀN/mất dữ liệu; KHÔNG nhắc lại WARN cũ, không soát lại phần không đổi.
 MỌI chế độ: dòng ĐẦU TIÊN trả về là `KẾT: PASS | BLOCK <n> | WARN <m>` để điều phối viên khỏi đọc phần còn lại khi PASS.
 
-Còn ≤5 lượt trước `maxTurns`: dừng việc mới, commit WIP (builder), trả NGAY khối báo cáo có nhãn với `CHẶN: HẾT LƯỢT — đã xong: … / còn: …` — không để bị cắt mất báo cáo.
+Còn ≤5 lượt trước `maxTurns`: dừng việc mới, trả NGAY khối báo cáo có nhãn với `CHẶN: HẾT LƯỢT — đã xong: … / còn: …` — không để bị cắt mất báo cáo.

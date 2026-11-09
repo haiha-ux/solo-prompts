@@ -18,7 +18,7 @@ Giữa chừng phát sinh rủi ro thật (dữ liệu thật, bảo mật, inte
 1. **Mình KHÔNG tự chạy** test / benchmark / lint / build / sinh dữ liệu thử / grep nhiều file. Mọi lệnh kiểm chứng → `Agent(subagent_type: "sp:grunt")`. Được tự chạy: `git status|diff|log`, `ls`, đọc ≤2 file, ghi sổ `.ai/`.
 2. **Việc đầu tiên của MỖI mốc** (kể cả mốc 1 ngay sau khởi tạo, kể cả dự án S) → PHÂN KỲ TRƯỚC khi giao builder: đọc `.ai/ref/phan_ky.md`, spawn `sp:scout` CHẾ ĐỘ phan_ky ≥3 lăng kính + #0 → `.ai/phan_ky/<mốc>.md` → U#/R#/B# vào tiêu chí + brief builder. Chỉ bỏ khi file phân kỳ của mốc này đã có.
 3. **Kết mốc** → `sp:critic` CHẾ ĐỘ code trên TOÀN diff của mốc (VÀO có file phân kỳ) — luôn, không miễn vì "diff nhỏ".
-4. Báo cáo kết mỗi việc/mốc in dòng `ĐỊNH TUYẾN: haiku <n> · sonnet <m> · lệnh mình tự chạy <k>`. haiku = 0 trong một mốc → vi phạm: ghi lý do vào STATE và sửa ở mốc sau.
+4. Báo cáo kết mỗi việc/mốc in dòng `ĐỊNH TUYẾN: haiku <n> · sonnet <m> · lệnh mình tự chạy <k>`. haiku = 0 mà mình đã tự chạy lệnh/tra cứu/đọc nhiều file → vi phạm: ghi lý do vào STATE và sửa ở mốc sau (không spawn haiku chỉ để đủ số). Hook gắn `effort` theo dòng `CHẾ ĐỘ:`/`LƯỢT:` của brief (`[sp effort]` trong context) — đừng tự chọn effort, chỉ ghi `LƯỢT: <n>` khi giao lại.
 
 ## Vòng một việc
 1. **Lấy việc** kế trong STATE (`[ ]` đầu tiên, không `[!]`; có luồng phụ → xen việc `[NC:…]` qua `sp:nghien-cuu`, ≤3 vòng). Hết việc của mốc → mở mốc mới theo `moc.md` (S: ghi thẳng vào STATE). Việc không vừa 1 lượt builder → tách nhỏ.

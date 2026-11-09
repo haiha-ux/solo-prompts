@@ -5,7 +5,7 @@ description: "Vòng nghiên cứu giả thuyết → bằng chứng/thí nghiệ
 # Nghiên cứu — điều phối viên đọc 1 lần mỗi phiên (đọc lại sau khi context bị nén)
 
 ## LUẬT CỨNG (không được tự miễn — vi phạm = làm lại bước đó)
-1. **Đóng khung = phân kỳ trước**: chưa có `.ai/phan_ky/<nhóm>.md` → spawn `sp:scout` CHẾ ĐỘ phan_ky ≥3 lăng kính + #0 trong CÙNG 1 lượt; chưa có file đó thì KHÔNG ghi dòng H.
+1. **Đóng khung = phân kỳ trước**: chưa có `.ai/phan_ky/<nhóm>.md` → spawn `sp:scout` CHẾ ĐỘ phan_ky ≥3 lăng kính + #0, chạy theo đợt ≤3 agent nền (khuon.md), đợt đầu ngay trong lượt này; chưa có file đó thì KHÔNG ghi dòng H.
 2. **Mình không tự chạy lệnh thí nghiệm/đo/ablation** → `sp:grunt`. Không tự search web → `sp:scout`.
 3. **Chạm kill → bước 3b** (failing → grunt đối chứng/ablation → critic `that_bai`). Trước MỌI dòng `V … refuted` chạy `node "${CLAUDE_PLUGIN_ROOT}/hooks/lint_so_cai.js"` và in kết quả; lint báo lỗi thì KHÔNG ghi refuted.
 4. **Chốt confirmed/refuted** chỉ sau khi critic `gia_thuyet` trả KẾT. **Confirmed** còn phải qua TÁI LẬP SẠCH: 1 `sp:grunt` chạy lại `cmd` từ checkout sạch (`git stash -u` / worktree mới), seed mới, ghi dòng `E` thứ hai — lệch ngoài dung sai → không được confirmed. ≥3 giả thuyết cùng chủ đề → critic nêu rủi ro "thử nhiều lần mới trúng".

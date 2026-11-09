@@ -13,7 +13,7 @@
 ✅ Gốc:        "API trả 500" → trace → field X nullable nhưng code giả định non-null → sửa query + validation
 ~~~
 Bug khác phát hiện giữa chừng: nhỏ + cùng file → sửa luôn, commit riêng · lớn/khác file → 1 dòng `.ai/no_ky_thuat.md`.
-1 lượt fix thất bại với lỗi lạ → PHÂN KỲ nhỏ (≤3 scout: lăng kính môi trường, đầu vào biên, phụ thuộc/phiên bản, #0) → danh sách giả thuyết nguyên nhân cho critic `loi`; song song scout tra message lỗi NGUYÊN VĂN + docs/changelog đúng phiên bản + GitHub issue (≤6 search) TRƯỚC lượt 2. 3 lượt vẫn thất bại → dừng, báo user:
+1 lượt fix thất bại với lỗi lạ → PHÂN KỲ nhỏ (≤3 scout: lăng kính môi trường, đầu vào biên, phụ thuộc/phiên bản, #0) → danh sách giả thuyết nguyên nhân cho critic `loi`; song song scout tra message lỗi NGUYÊN VĂN + docs/changelog đúng phiên bản + GitHub issue (≤6 search) TRƯỚC lượt 2. Lượt fix ≥2: critic `loi` MỚI và builder MỚI (không SendMessage builder cũ — effort giữ nguyên khi resume), brief có dòng `LƯỢT: <n>` → hook nâng effort (critic xhigh, builder high). 3 lượt vẫn thất bại → dừng, báo user:
 ~~~
 Vấn đề: … | Tầng: … | Đã thử: 1) … 2) … | Lỗi: <message chính xác> | Giả thuyết: … | Cần từ bạn: …
 ~~~

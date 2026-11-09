@@ -24,6 +24,7 @@ test('builder', () => {
 test('critic', () => {
   assert.strictEqual(check('sp:critic', 'KẾT: PASS'), '');
   assert.strictEqual(check('sp:critic', '**KẾT: BLOCK 2**\n[BLOCK] ...'), '');
+  assert.strictEqual(check('sp:critic', 'CHẶN: HẾT LƯỢT — đã xong: a / còn: b'), '');
   assert.match(check('sp:critic', 'Overall the code looks fine.\nKẾT: PASS'), /ĐẦU TIÊN/);
 });
 test('grunt', () => {
