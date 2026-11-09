@@ -15,7 +15,7 @@ function isSpProject(start) {
 // Trả lý do cần sửa, hoặc '' nếu đạt.
 function check(agent, msg) {
   const t = String(msg || '').trim();
-  if (!t || /CHẶN:\s*HẾT LƯỢT/i.test(t)) return ''; // rỗng (SubagentHandback) / sắp hết maxTurns → không ép thêm lượt
+  if (!t || /CHẶN:\s*(HẾT LƯỢT|CẦN NGƯỜI|CẦN TRÌNH DUYỆT)/i.test(t)) return ''; // rỗng (SubagentHandback) / sắp hết maxTurns → không ép thêm lượt
   if (agent === 'sp:builder') {
     if (/CHẶN:\s*(THIẾU|CẦN|HẾT)/i.test(t)) return ''; // dừng sớm có lý do — điều phối viên xử lý
     const miss = BUILDER_LABELS.filter((l) => !new RegExp('(^|[\\n·|])\\s*[*`>-]*\\s*' + l + '(?:/[^:]*)?\\s*[*`]*:', 'i').test(t));

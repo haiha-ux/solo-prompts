@@ -1,0 +1,8 @@
+{
+  "name": "sp-solo-prompts",
+  "private": true,
+  "description": "Phụ thuộc runtime của plugin sp (cài tự động khi Claude Code cache plugin).",
+  "dependencies": {
+    "@playwright/mcp": "latest"
+  }
+}

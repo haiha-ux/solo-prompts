@@ -16,7 +16,7 @@ claude plugin install sp@solo-prompts
 **Cập nhật / tự cập nhật:** marketplace bên thứ 3 mặc định TẮT auto-update → bật: `/plugin` → Marketplaces → `solo-prompts` → Enable auto-update. Thủ công: `claude plugin marketplace update solo-prompts && claude plugin update sp@solo-prompts`, rồi khởi động lại Claude Code. Gỡ: `claude plugin uninstall sp@solo-prompts`.
 **Phát hành bản mới (người bảo trì):** sửa file → TĂNG `version` trong `.claude-plugin/plugin.json` (không tăng thì máy khác không thấy bản mới) → `claude plugin validate .` → commit + push.
 Không cài được (máy lạ, không quyền)? Dán nội dung `skills/khoi-tao/SKILL.md` + mô tả — agent tự dùng `general-purpose` + `model` thay cho agent riêng (mất skill chế độ, nên chỉ để chữa cháy).
-**Yêu cầu máy:** Claude Code (đã kèm Node — hook của plugin chạy bằng `node`, nên Windows không cần Git Bash cho hook) · git. Tùy chọn: `codegraph` (tra code nhanh hơn; thiếu → agent dùng grep, hook báo 1 dòng), `gh` (PR/repo). Windows: các lệnh grep/xargs của bản đồ code cần Git Bash (Claude Code dùng nó cho Bash tool).
+**Yêu cầu máy:** Claude Code (đã kèm Node — hook của plugin chạy bằng `node`, nên Windows không cần Git Bash cho hook) · git. codegraph và Playwright MCP tự cài (xem mục Plugin & MCP). Node ≥22.5 cho codegraph. Tùy chọn: `gh` (PR/repo). Windows: các lệnh grep/xargs của bản đồ code cần Git Bash (Claude Code dùng nó cho Bash tool).
 **Quyền cho agent chạy nền** (thiếu → agent trả `DENIED`): thêm vào `.claude/settings.json` của dự án (hoặc `~/.claude/settings.json`), sửa dòng lệnh test cho đúng dự án:
 ```json
 {"permissions":{"allow":["WebSearch","WebFetch","Bash(git status:*)","Bash(git diff:*)","Bash(git log:*)","Bash(git add:*)","Bash(git commit:*)","Bash(git worktree:*)","Bash(git branch:*)","Bash(git merge:*)","Bash(git ls-files:*)","Edit","Write","Bash(node:*)","Bash(codegraph:*)","Bash(echo:*)","Bash(grep:*)","Bash(ls:*)","Bash(wc:*)","Bash(cat:*)","Bash(xargs:*)","Bash(pytest:*)","Bash(npm test:*)"],"deny":["Bash(git push:*)","Bash(rm -rf:*)"]}}
@@ -86,10 +86,18 @@ Cùng đề CLI demtu có giao diện rõ, chấm bằng 12 test ẩn (NFD, CRLF
 
 ## Plugin & MCP đi kèm
 - **Context7** (docs thư viện đúng phiên bản) được cài TỰ ĐỘNG cùng plugin (`.mcp.json`, server từ xa, không cần key, chỉ 2 tool; Claude Code hoãn nạp schema MCP nên gần như không tốn context). Builder/scout/critic tra docs ở đây trước, web chỉ khi cần issue/changelog/benchmark.
-- **codegraph** (tra code, giảm token đọc file): CLI cài riêng mỗi máy — `npm i -g @colbymchenry/codegraph` (Node ≥22.5) rồi `codegraph init` trong dự án. Thiếu thì agent dùng grep, hook báo 1 dòng.
+- **codegraph** (tra code, giảm token đọc file): hook `setup.js` TỰ CÀI (`npm i -g @colbymchenry/codegraph`, cần Node ≥22.5), tự `codegraph upgrade` mỗi 7 ngày, và tự đăng ký MCP (`claude mcp add --scope user codegraph -- codegraph serve --mcp`). `/sp:khoi-tao` chạy `codegraph init` trong dự án. Thiếu thì agent dùng grep.
+- **Playwright MCP — trình duyệt thật** (v4.13), cài TỰ ĐỘNG cùng plugin:
+  - Cài đặt: gói `@playwright/mcp@latest` khai trong `package.json` (Claude Code cài khi cache plugin; thiếu thì `setup.js` cài vào `~/.claude/plugins/data/…`), cập nhật mỗi 7 ngày. Máy không có Chrome → tự cài Chromium.
+  - Hồ sơ trình duyệt: RIÊNG cho từng dự án, đặt ngoài repo ở `~/.claude/plugins/data/sp-solo-prompts/browser/<dự án>-<hash>`. Không commit nhầm cookie, không bị OneDrive đồng bộ. Đăng nhập một lần, các phiên sau dùng lại.
+  - Dùng khi fetch bị chặn hoặc site chặn bot (Scholar, ResearchGate, nhà xuất bản, X, LinkedIn…), khi cần đăng nhập, khi **xác minh trích dẫn** (`✓tđ` / `≈tđ` / `✗tđ` trên dòng nguồn) và khi kiểm UI web của dự án (grunt việc UI). Agent đọc trang bằng `browser_evaluate` innerText, không đọc cả snapshot, cho đỡ token.
+  - Cần người thật (đăng nhập / captcha / 2FA): agent không tự làm, trả `CHẶN: CẦN NGƯỜI`. Opus mở đúng trang trên máy bạn rồi hỏi 1 lần, bạn đăng nhập xong thì agent làm tiếp. Danh sách site đã đăng nhập ghi ở `.ai/trinh_duyet.md` (không ghi mật khẩu).
+  - Ràng buộc: cả phiên dùng chung 1 trình duyệt, nên hook `browser.js` chỉ cho 1 agent dùng tại 1 thời điểm. Phiên chính chỉ được mở và đóng trang, việc đọc giao `sp:scout`.
+  - Tùy chọn: chạy không cửa sổ bằng biến môi trường `SP_PW_HEADLESS=1` (Linux không có màn hình thì tự chạy headless) · chọn trình duyệt bằng `SP_PW_BROWSER=msedge|chrome|chromium|firefox`. Quy trình đầy đủ: `skills/nghien-cuu/tham-chieu/trinh_duyet.md`.
+- **Tự cài công cụ** (`hooks/setup.js`, SessionStart chạy nền, tối đa 1 lần/ngày): kết quả hiện 1 dòng `[sp setup] …`, log ở `~/.claude/plugins/data/sp-solo-prompts/setup.log`. Tắt bằng `SP_NO_AUTOINSTALL=1`; chạy ngay bằng `node "<plugin>/hooks/setup.js" --force`.
 - **Exa** (search/fetch web) cũng cài TỰ ĐỘNG cùng plugin (từ xa, không cần key; lỗi/giới hạn → agent tự dùng WebSearch).
 - **Đo thật (2026-10-31, mỗi phép 1 phiên haiku, câu trả lời đúng như nhau)**: Context7 $0.023 vs WebFetch $0.060 (3 câu docs, rẻ hơn ~62%) · Exa $0.022 vs WebSearch $0.072 (2 câu search, rẻ hơn ~70%, ít lượt hơn).
-- **Tùy chọn, tự thêm khi cần**: arXiv (paper) `claude mcp add arxiv -- uvx arxiv-mcp-server` · Playwright (test trình duyệt) `claude mcp add playwright -- npx @playwright/mcp@latest`.
+- **Tùy chọn, tự thêm khi cần**: arXiv (paper) `claude mcp add arxiv -- uvx arxiv-mcp-server`. (Đã có Playwright riêng của user → vẫn dùng được, nhưng agent sp dùng bản đi kèm `mcp__plugin_sp_playwright__*`.)
 - **Cố ý KHÔNG dùng**: GitHub MCP (schema rất nặng, `gh` CLI làm được) · Serena (trùng codegraph, nhiều tool, GPL).
 
 ## Câu hỏi thường gặp khi vận hành

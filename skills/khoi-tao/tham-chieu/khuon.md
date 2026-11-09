@@ -32,7 +32,7 @@ Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent:
 ## Tra cứu (kiến thức của model có hạn cắt — trí nhớ về thư viện/API/SOTA mặc định là NGHI VẤN)
 BẮT BUỘC tra (run scout, hoặc dòng INDEX ≤12 tháng mà file run còn tồn tại) TRƯỚC khi: T1 dùng thư viện/API/CLI/model lần đầu hoặc khác phiên bản mục Phiên bản · T2 chọn stack/dịch vụ · T3 lỗi lạ sau 1 lượt fix thất bại (tìm message lỗi nguyên văn + issue/changelog) · T4 khẳng định "chưa ai làm/SOTA/không tồn tại" (≥3 truy vấn khác góc + arXiv/GitHub) · T5 số liệu benchmark, giá, quota, tên/ID model · T6 trước khi chốt giả thuyết `blk`.
 MIỄN T1: stdlib · thư viện ổn định lâu năm dùng API cơ bản (vd requests, pytest, express) → ghi Phiên bản từ lockfile "ổn định, từ lockfile, <ngày>". BẮT tra: thư viện <2 năm tuổi, đổi major, API ít dùng, SDK LLM/cloud/model. GỘP: chọn stack/dựng scaffold → 1 scout tra tất cả dependency một lần.
-Docs/API thư viện → Context7 trước (MCP đi kèm plugin; builder tự tra được); issue/changelog/benchmark/tính mới → web qua Exa (MCP đi kèm, rẻ hơn WebSearch ~70% khi đo thật), lỗi → WebSearch. Mọi tra web → scout (haiku, chạy nền); mình chỉ tự mở 1 URL user đưa.
+Docs/API thư viện → Context7 trước (MCP đi kèm plugin; builder tự tra được); issue/changelog/benchmark/tính mới → web qua Exa (MCP đi kèm, rẻ hơn WebSearch ~70% khi đo thật), lỗi → WebSearch. Fetch bị chặn / site chặn bot / cần đăng nhập / xác minh trích dẫn → trình duyệt thật (Playwright MCP đi kèm, hồ sơ riêng dự án, `.ai/ref/trinh_duyet.md`). Mọi tra web → scout (haiku, chạy nền); mình chỉ tự mở 1 URL user đưa, hoặc mở trang để user đăng nhập khi agent báo `CHẶN: CẦN NGƯỜI`.
 
 ## Phiên bản (đã xác minh bằng tra cứu: thư viện | phiên bản | ngày kiểm | run)
 

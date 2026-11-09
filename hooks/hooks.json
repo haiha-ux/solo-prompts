@@ -13,6 +13,20 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/setup.js"
+            ],
+            "async": true,
+            "timeout": 900
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -28,6 +42,19 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "mcp__plugin_sp_playwright__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/browser.js"
+            ],
+            "timeout": 5
+          }
+        ]
       }
     ],
     "SubagentStop": [
@@ -39,6 +66,20 @@
             "command": "node",
             "args": [
               "${CLAUDE_PLUGIN_ROOT}/hooks/gate.js"
+            ],
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "^sp:",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/browser.js",
+              "--release"
             ],
             "timeout": 5
           }

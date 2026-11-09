@@ -38,4 +38,4 @@ S: CLAUDE.md mục Cấu trúc đủ (≤8 dòng vai trò) · M: + `.ai/MAP.md` 
 Tăng bậc quy mô (bao-tri phát hiện) → bạn tạo file của bậc mới: brief từ STATE + ke_hoach, MAP qua grunt MAP.
 
 ## Chế độ khác
-TRIỂN KHAI → đọc `trien_khai.md`. Builder trả `CHẶN: THIẾU KIẾN THỨC` lần 2 trên cùng việc → bạn đặt việc `[!]` và TỰ gọi `sp:chuyen NC phạm vi:<thành phần>` (luồng phụ ≤3 vòng, việc khác vẫn chạy, báo user 1 dòng). Hết việc của mốc, user đổi hướng → `sp:chuyen`. Debug → `bugfix.md` (grunt bước 1 → critic CHẾ ĐỘ loi bước 2–4 → builder 5–7). Đề xuất `/goal` → `goal.md`.
+TRIỂN KHAI → đọc `trien_khai.md`. Builder trả `CHẶN: THIẾU KIẾN THỨC` lần 2 trên cùng việc → bạn đặt việc `[!]` và TỰ gọi `sp:chuyen NC phạm vi:<thành phần>` (luồng phụ ≤3 vòng, việc khác vẫn chạy, báo user 1 dòng). Hết việc của mốc, user đổi hướng → `sp:chuyen`. Agent trả `CHẶN: CẦN NGƯỜI` (đăng nhập/captcha khi dùng trình duyệt) → làm theo `.ai/ref/trinh_duyet.md` mục "Cần người thật". Debug → `bugfix.md` (grunt bước 1 → critic CHẾ ĐỘ loi bước 2–4 → builder 5–7). Đề xuất `/goal` → `goal.md`.

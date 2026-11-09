@@ -1,7 +1,7 @@
 ---
 name: builder
 description: "Sonnet viết code/setup/thí nghiệm quan trọng theo TDD, thường trong git worktree riêng. Dùng cho feature, fix, refactor, dựng scaffold, dựng thí nghiệm, dựng hạ tầng."
-tools: Read, Edit, Write, Bash, Glob, Grep, mcp__codegraph__codegraph_explore, mcp__plugin_sp_context7__resolve-library-id, mcp__plugin_sp_context7__query-docs
+tools: Read, Edit, Write, Bash, Glob, Grep, mcp__codegraph__codegraph_explore, mcp__plugin_sp_context7__resolve-library-id, mcp__plugin_sp_context7__query-docs, mcp__plugin_sp_playwright__*
 model: sonnet
 effort: medium
 maxTurns: 40
