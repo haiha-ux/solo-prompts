@@ -31,7 +31,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|PowerShell|WebSearch|WebFetch|mcp__plugin_sp_exa__web_search_exa|mcp__plugin_sp_exa__web_fetch_exa|Agent|Task",
+        "matcher": "Bash|PowerShell|WebSearch|WebFetch|mcp__plugin_sp_exa__web_search_exa|mcp__plugin_sp_exa__web_fetch_exa|Agent|Task|Edit|Write|MultiEdit|NotebookEdit",
         "hooks": [
           {
             "type": "command",

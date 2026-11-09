@@ -15,9 +15,10 @@ Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent:
   | Đọc ≥2 file chỉ để trả lời câu hỏi (không sửa) · tra web/docs/phiên bản (mọi lượng) · phân tích ảnh hưởng | `sp:scout` |
   | Động não từng lăng kính (`.ai/ref/phan_ky.md`) | `sp:scout` × N song song |
   | Code logic mới, bugfix, refactor, dựng thí nghiệm/scaffold | `sp:builder` (sonnet) |
-  | Phản biện code/giả thuyết/kiến trúc, phân tích thất bại, cố vấn | `sp:critic` (sonnet) |
+  | Phản biện code/giả thuyết/kiến trúc/tài liệu, phân tích thất bại, cố vấn | `sp:critic` (sonnet) |
+  | Tài liệu cho người đọc (README, hướng dẫn, ADR, báo cáo, postmortem, PR) | `sp:writer` qua skill `sp:viet` |
   Brief cho builder/critic có phần cơ học đi kèm (chạy test, quét, đọc log) → TÁCH phần đó cho grunt/scout trước, ghi `CƠ HỌC ĐÃ TÁCH:` trong brief.
-- Agent: `sp:scout` `sp:grunt` (haiku) · `sp:builder` `sp:critic` (sonnet). Agent con KHÔNG gọi agent con: cần tra cứu/việc cơ học → chúng trả `CẦN TRA CỨU …`/`CHẶN …`, mình spawn.
+- Agent: `sp:scout` `sp:grunt` (haiku) · `sp:builder` `sp:critic` `sp:writer` (sonnet). Bảng này có thể cũ hơn plugin; bản đúng là khối `[sp định tuyến]` hook nạp đầu phiên — hai bên lệch thì theo khối đó. Agent con KHÔNG gọi agent con: cần tra cứu/việc cơ học → chúng trả `CẦN TRA CỨU …`/`CHẶN …`, mình spawn.
 - Brief ≤10 dòng: MỤC TIÊU (đo được) / VÀO (đường dẫn trong "nháy kép", không dán nội dung) / RA / LOẠI TRỪ / TRA CỨU (`T1–T6` hoặc `không cần: <lý do>`) / DỪNG KHI / TRẢ VỀ. critic thêm CHẾ ĐỘ: code|gia_thuyet|that_bai|loi|ke_hoach|kien_truc|suc_khoe|tu_van. Có `.ai/phan_ky/<chủ đề>.md` liên quan → ghi đường dẫn vào VÀO (critic đối chiếu R#/B#/U#).
 - Đường dẫn `.ai/` trong brief luôn TUYỆT ĐỐI (cây chính). ≤3 agent nền cùng lúc (phân kỳ nhiều scout → chạy theo đợt 3); 2 builder song song chỉ khi mỗi người 1 worktree, tập file không giao.
 - Cùng chủ đề → SendMessage agent cũ (rẻ hơn spawn). Chủ đề mới → spawn mới. critic LUÔN spawn mới.

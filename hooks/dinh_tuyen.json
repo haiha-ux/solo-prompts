@@ -1,0 +1,10 @@
+{
+  "_ghi_chu": "Nguồn duy nhất của bảng định tuyến. probe.js nạp vào [sp brief] mỗi phiên và sau khi nén; route.js dùng để soát lúc spawn; test bắt buộc mọi agents/*.md có mặt ở đây. Thêm agent mới → thêm 1 dòng.",
+  "agents": [
+    { "agent": "sp:grunt", "model": "haiku", "giao": "chạy test/lint/build/lệnh bất kỳ, chạy lặp/quét tham số, đếm/grep/liệt kê, sinh MAP, rename/format, kiểm UI bằng trình duyệt theo kịch bản", "khong": "quyết định thiết kế, viết logic" },
+    { "agent": "sp:scout", "model": "haiku", "giao": "tra web/docs/phiên bản/changelog/issue, đọc ≥2 file để trả lời câu hỏi, phân tích ảnh hưởng, động não từng lăng kính (×N song song), xác minh trích dẫn bằng trình duyệt", "khong": "sửa code, kết luận thay điều phối viên" },
+    { "agent": "sp:builder", "model": "sonnet", "giao": "code logic mới, bugfix, refactor, dựng scaffold/thí nghiệm, kèm test (TDD)", "khong": "chỉ chạy test (→ grunt), viết tài liệu dài (→ writer), tra cứu (→ scout)" },
+    { "agent": "sp:critic", "model": "sonnet", "giao": "soát code/giả thuyết/kế hoạch/kiến trúc/sức khỏe/tài liệu, phân tích thất bại, tìm nguyên nhân gốc lỗi, cố vấn quyết định — luôn spawn mới", "khong": "sửa code, viết lại tài liệu" },
+    { "agent": "sp:writer", "model": "sonnet", "giao": "tài liệu cho người đọc: README, hướng dẫn, thiết kế, ADR, SPEC dạng văn, báo cáo nghiên cứu/thí nghiệm, postmortem, bàn giao, changelog, mô tả PR (qua skill sp:viet)", "khong": "code, sổ .ai/ (STATE/so_cai/runs do mình ghi)" }
+  ]
+}

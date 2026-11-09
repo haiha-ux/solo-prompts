@@ -48,6 +48,16 @@ if (process.argv.includes('--precompact')) {
 
 try { syncRef(project); } catch { /* không chặn phiên */ }
 
+// Bảng định tuyến lấy từ plugin (hooks/dinh_tuyen.json) — không chép cứng vào CLAUDE.md dự án nên không bao giờ cũ.
+function roster() {
+  try {
+    const t = JSON.parse(fs.readFileSync(path.join(__dirname, 'dinh_tuyen.json'), 'utf8')).agents;
+    return '[sp định tuyến — agent có sẵn, giao đúng loại; tự làm chỉ khi ≤3 tool call ngắn]\n' +
+      t.map((a) => `${a.agent} (${a.model}): ${a.giao} — KHÔNG: ${a.khong}`).join('\n') +
+      '\nAgent dựng sẵn Explore/general-purpose/Plan chạy trên Opus → không dùng. Skill: sp:viet (tài liệu), sp:chuyen (đổi chế độ), sp:bao-tri.';
+  } catch { return ''; }
+}
+
 const notes = [];
 if ((input.source || 'startup') === 'startup') {
   const has = (c) => {
@@ -69,10 +79,12 @@ if (['startup', 'resume', 'clear', ''].includes(input.source || '')) {
     (lg ? '\n## git log -5\n' + lg : '') + (gs ? '\n## git status --short\n' + cap(gs, 1200) : '');
   if (/NGHIÊN CỨU|Luồng phụ: NC/.test(state)) b += '\n## .ai/findings.md\n' + cap(rdf('.ai/findings.md'), 2500);
   notes.push(cap(b, 8000));
+  notes.push(roster());
 }
 if (input.source === 'compact') {
   const mode = modeOf();
   notes.push(`[sp] context vừa nén (chế độ: ${mode || '?'}): đọc lại .ai/STATE.md rồi GỌI LẠI skill của chế độ trước khi làm tiếp. LUẬT CỨNG còn hiệu lực: không tự chạy test/đo/thí nghiệm (→ sp:grunt) · không tự search (→ sp:scout) · phân kỳ trước việc đầu mốc/đóng khung giả thuyết · critic kết mốc · chạm kill → failing + phân tích thất bại trước khi refuted.`);
+  notes.push(roster());
 }
 // Resume khi cache đã hết hạn: request đầu ghi lại TOÀN BỘ context (docs hooks#sessionstart-input, v2.1.251+).
 let systemMessage;
