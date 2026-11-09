@@ -12,13 +12,13 @@ fs.writeFileSync(path.join(proj, '.ai', 'STATE.md'), 'Chế độ: XÂY DỰNG\n
 let n = 0;
 function run(tool_input, extra = {}) {
   const out = execFileSync(process.execPath, [path.join(__dirname, 'guard.js')], {
-    input: JSON.stringify({ tool_name: 'Agent', tool_input, cwd: proj, session_id: 'spawn' + (n++), ...extra }), encoding: 'utf8' });
+    input: JSON.stringify({ tool_name: 'Agent', tool_input, cwd: proj, session_id: `spawn-${process.pid}-${Date.now()}-${n++}`, ...extra }), encoding: 'utf8' });
   return out ? JSON.parse(out).hookSpecificOutput : null;
 }
 
-test('việc mới chưa phân kỳ → chặn; có dòng bỏ qua có lý do → qua', () => {
+test('việc mới chưa phân kỳ → chặn, kể cả khi brief tự ghi bỏ qua', () => {
   assert.strictEqual(run({ subagent_type: 'sp:builder', description: 'add flag', prompt: 'VIỆC: thêm cờ --dry-run' }).permissionDecision, 'deny');
-  assert.strictEqual(run({ subagent_type: 'sp:builder', description: 'rename', prompt: 'VIỆC: đổi tên\nPHÂN KỲ: bỏ qua — chỉ đổi tên biến' }), null);
+  assert.strictEqual(run({ subagent_type: 'sp:builder', description: 'rename', prompt: 'VIỆC: đổi tên\nPHÂN KỲ: bỏ qua — chỉ đổi tên biến' }).permissionDecision, 'deny');
 });
 test('sửa lỗi có quy trình riêng → không chặn phân kỳ', () => {
   const o = run({ subagent_type: 'sp:builder', description: 'TDD fix email case', prompt: 'VIỆC: sửa lỗi email hoa thường, test tái hiện đỏ trước' });

@@ -30,7 +30,8 @@ function isSpProject(start) {
 }
 // Lệnh có phải là CHẠY TEST không: bỏ chuỗi trong nháy, tách theo ; & | (, xét token đầu của từng đoạn.
 function isTestCommand(cmd) {
-  let s = String(cmd || '');
+  // Thân heredoc là DỮ LIỆU (vd ghi STATE có chữ "pytest 9.2"), không phải lệnh — đo thật v4.16.5 chặn nhầm.
+  let s = String(cmd || '').replace(/<<-?\s*(['"]?)(\w+)\1[^\n]*\n[\s\S]*?\n\s*\2\s*(?=\n|$)/g, ' ');
   const inner = s.match(/\b(?:bash|sh|cmd|pwsh|powershell)(?:\.exe)?\s+(?:-c|\/c|-Command)\s+(["'])([\s\S]*?)\1/i);
   if (inner) s += ' ; ' + inner[2];                       // bash -c "pytest" → xét cả nội dung
   s = s.replace(/"[^"]*"|'[^']*'/g, ' ');                  // echo "run pytest later" không tính
@@ -85,6 +86,18 @@ function codeWriteTarget(tool, ti) {
   const viaVar = /open\([^)]*?,\s*["'][wax]|\.write_text\(|writeFileSync\(/.test(cmd) && cmd.match(new RegExp(`["'](${ext})["']`, 'i'));
   return viaVar && isCode(viaVar[1]) ? viaVar[1] : '';
 }
+// Tài liệu cho người đọc mà phiên chính sắp TẠO MỚI hoặc GHI ĐÈ dài (>1200 ký tự) — '' nếu không. Sửa nhỏ (Edit) được qua.
+const DOC_SKIP = /(^|[\\/])(\.ai|\.claude|node_modules|\.git|skills|agents|memory)[\\/]|(^|[\\/])(CLAUDE|SKILL|MEMORY|STATE|AGENTS|CHANGELOG)\.md$/i;
+function humanDocWrite(tool, ti) {
+  const f = String(ti.file_path || '');
+  if (!/\.(md|mdx|markdown|rst|txt)$/i.test(f) || DOC_SKIP.test(f.replace(/\\/g, '/'))) return '';
+  if (tool === 'Write') return String(ti.content || '').length > 1200 ? f : '';
+  if (tool === 'Edit' || tool === 'MultiEdit') {
+    const n = tool === 'Edit' ? String(ti.new_string || '').length : (ti.edits || []).reduce((s, e) => s + String(e.new_string || '').length, 0);
+    return n > 2500 ? f : ''; // viết lại gần cả tài liệu bằng Edit cũng tính
+  }
+  return '';
+}
 function hasPhanKy(start) {
   for (let dir = path.resolve(start || process.cwd()); ; dir = path.dirname(dir)) {
     const ai = path.join(dir, '.ai');
@@ -106,6 +119,19 @@ function main() {
   if (!isSpProject(input.cwd)) return; // không phải dự án sp (việc TRỰC TIẾP / ngoài sp)
   const tool = input.tool_name;
   const ti = input.tool_input || {};
+  // Đo thật (v4.16.5): Opus tự viết docs/hieu_nang.md (lint 4 cờ văn máy) thay vì giao writer.
+  const doc = humanDocWrite(tool, ti);
+  if (doc) {
+    if (bump(input.session_id, 'doc:' + h(doc)) > 2) return;
+    stat.log(input.cwd, 'deny_doc', path.basename(doc));
+    return deny(`[sp] tài liệu cho người đọc (${path.basename(doc)}) → giao sp:writer qua skill sp:viet (LOẠI · NGƯỜI ĐỌC · MỤC ĐÍCH · NGUỒN · RA); writer viết theo van_phong.md và tự chạy lint. Sửa nhỏ tài liệu có sẵn thì được tự làm. (Cùng file bị chặn 2 lần thì lần 3 được qua.)`);
+  }
+  // Resume agent: giữ khuôn trả về (spawn đã có [sp khuôn]; tin SendMessage thì chưa → builder bỏ nhãn, gate trả về 1 lượt).
+  if (tool === 'SendMessage' && ti.message && !String(ti.message).includes('[sp khuôn]') && !/^main$/.test(String(ti.to || ''))) {
+    process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'allow',
+      updatedInput: { ...ti, message: String(ti.message) + '\n[sp khuôn] Trả lời bằng đúng khối TRẢ VỀ có nhãn trong định nghĩa agent của bạn (như lần đầu).' } } }));
+    return;
+  }
   const codeFile = codeWriteTarget(tool, ti);
   if (codeFile) {
     if (bump(input.session_id, 'code:' + h(codeFile)) > 2) return; // van thoát theo file (sửa 1 dòng gấp)
@@ -140,17 +166,12 @@ function main() {
         stat.log(input.cwd, 'deny_wait', ti.subagent_type);
         return deny('[sp] không spawn agent chỉ để chờ: agent nền tự báo khi xong. Kết thúc lượt hoặc làm việc khác.');
       }
-      // Đo thật (v4.16): lời nhắc mềm bị bỏ qua, và van "lần 2 cho qua" bị Opus spawn lại ngay để lách.
-      // → chỉ qua khi có file phân kỳ, hoặc brief ghi rõ quyết định bỏ: `PHÂN KỲ: bỏ qua — <lý do>` (được ghi vào số liệu).
-      // Sửa lỗi có quy trình riêng (bugfix.md: tái hiện → gốc → sửa; phân kỳ chỉ sau 1 lượt fix thất bại) → không chặn.
+      // Đo thật (v4.16): lời nhắc mềm bị bỏ qua; van "lần 2 cho qua" bị lách; dòng "PHÂN KỲ: bỏ qua" bị dùng cả cho tính năng mới.
+      // → LUẬT CỨNG 2 tuyệt đối: chỉ qua khi đã có file phân kỳ, brief là sửa lỗi (bugfix.md có quy trình riêng), hoặc STATE ghi mức trực tiếp.
       const isBugfix = /\b(?:fix|bugfix|hotfix)\/|sửa lỗi|tái hiện|bugfix|\bbug\b/i.test(String(ti.prompt || '') + ' ' + String(ti.description || ''));
       if (ti.subagent_type === 'sp:builder' && !isBugfix && !hasPhanKy(input.cwd)) {
-        const skip = String(ti.prompt || '').match(/PHÂN KỲ[\s*_`]*:[\s*_`]*bỏ qua\s*[—–:-]\s*(\S.{3,})/i);
-        if (skip) stat.log(input.cwd, 'skip_phanky', skip[1].slice(0, 80));
-        else {
-          stat.log(input.cwd, 'deny_phanky');
-          return deny('[sp] LUẬT CỨNG 2: chưa có .ai/phan_ky/ nào — việc đầu mốc cần phân kỳ TRƯỚC khi giao builder. Mức VỪA: spawn 1 sp:scout CHẾ ĐỘ phan_ky gộp 3 lăng kính (lỗi thực tế · đầu vào biên · pre-mortem) + #0, ghi .ai/phan_ky/<mốc>.md, đưa R#/B# vào brief builder. Chỉ khi thật sự không cần (vd sửa typo, đổi tên) mới thêm vào brief builder dòng `PHÂN KỲ: bỏ qua — <lý do cụ thể>`.');
-        }
+        stat.log(input.cwd, 'deny_phanky');
+        return deny('[sp] LUẬT CỨNG 2: chưa có .ai/phan_ky/ nào — việc đầu mốc cần phân kỳ TRƯỚC khi giao builder (kể cả việc nhỏ; mức VỪA chỉ tốn 1 scout haiku). Spawn 1 sp:scout CHẾ ĐỘ phan_ky gộp 3 lăng kính (lỗi thực tế · đầu vào biên · pre-mortem) + #0, RA = .ai/phan_ky/<mốc>.md, rồi đưa R#/B# vào tiêu chí + brief builder. Có thể chạy song song với việc của grunt/scout khác.');
       }
       // Đo thật (v4.16, 5/5 lần chạy): brief có `TRẢ VỀ:` riêng làm builder bỏ khối nhãn → gate trả về 1 lượt sonnet. Giữ khuôn bằng câu nối thêm (0 token Opus).
       let prompt = ti.prompt;
@@ -179,4 +200,4 @@ if (require.main === module) {
   try { main(); } catch { /* fail-open */ }
   process.exit(0);
 }
-module.exports = { isTestCommand, codeWriteTarget };
+module.exports = { isTestCommand, codeWriteTarget, humanDocWrite };

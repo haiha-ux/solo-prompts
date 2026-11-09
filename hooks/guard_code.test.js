@@ -22,3 +22,16 @@ test('cho qua sổ, tài liệu, cấu hình, lệnh đọc', () => {
     'grep -n norm src/a.py > .ai/runs/x.md', 'cat dedup.py', 'git diff HEAD -- src/a.ts', "python - <<'EOF'\nprint(open('dedup.py').read()[:100])\nEOF"])
     assert.strictEqual(B(cmd), '', cmd);
 });
+const { humanDocWrite: d, isTestCommand: t } = require('./guard.js');
+test('tài liệu người đọc dài → writer; sổ và sửa nhỏ → qua', () => {
+  assert.ok(d('Write', { file_path: 'docs/hieu_nang.md', content: 'x'.repeat(2000) }));
+  assert.ok(d('Edit', { file_path: 'README.md', new_string: 'x'.repeat(3000) }));
+  assert.strictEqual(d('Edit', { file_path: 'docs/huong_dan.md', new_string: 'sửa một câu' }), '');
+  assert.strictEqual(d('Write', { file_path: '.ai/STATE.md', content: 'x'.repeat(5000) }), '');
+  assert.strictEqual(d('Write', { file_path: 'CLAUDE.md', content: 'x'.repeat(5000) }), '');
+  assert.strictEqual(d('Write', { file_path: 'notes.md', content: 'ngắn' }), '');
+});
+test('heredoc ghi sổ có chữ pytest không phải lệnh test', () => {
+  assert.strictEqual(t("cat > .ai/STATE.md <<'EOF'\npytest | 9.2.0 | 2026-11-09\nEOF"), false);
+  assert.strictEqual(t("cat > x.md <<EOF\nnpm test sẽ chạy sau\nEOF\npytest -q"), true);
+});
