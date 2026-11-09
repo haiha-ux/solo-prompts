@@ -54,7 +54,7 @@ function roster() {
     const t = JSON.parse(fs.readFileSync(path.join(__dirname, 'dinh_tuyen.json'), 'utf8')).agents;
     return '[sp định tuyến — agent có sẵn, giao đúng loại; tự làm chỉ khi ≤3 tool call ngắn]\n' +
       t.map((a) => `${a.agent} (${a.model}): ${a.giao} — KHÔNG: ${a.khong}`).join('\n') +
-      '\nAgent dựng sẵn Explore/general-purpose/Plan chạy trên Opus → không dùng. Skill: sp:viet (tài liệu), sp:chuyen (đổi chế độ), sp:bao-tri.';
+      '\nAgent nền tự báo khi xong: không sleep/echo chờ, không spawn agent để chờ. Đã giao việc cho agent thì không tự làm lại việc đó (vd tự curl khi scout đang tra). Agent dựng sẵn Explore/general-purpose/Plan chạy trên Opus → không dùng. Skill: sp:viet (tài liệu), sp:chuyen (đổi chế độ), sp:bao-tri.';
   } catch { return ''; }
 }
 

@@ -169,7 +169,7 @@ Ghi công: phân biệt phiên chính và agent con bằng `agent_id`, brief đ�
 
 ## Changelog
 
-- 4.16: bảng định tuyến duy nhất `hooks/dinh_tuyen.json`, được nạp vào mỗi phiên và sau khi nén, có test bắt buộc khai đủ agent. `guard.js` chặn phiên chính tự ghi file code và tự `curl` web, và chặn giao builder khi chưa phân kỳ, trừ khi brief ghi `PHÂN KỲ: bỏ qua — <lý do>`. Đo trên một đề trộn 5 việc, Opus giao đúng 5 loại agent ở cả hai bản. Bản 4.15 có Opus tự vá code sau critic, 5 lệnh tự chạy và không phân kỳ. Bản 4.16.2 có 0 lần tự vá code, 3 lệnh tự chạy, và bỏ phân kỳ có ghi lý do ($1.24 so với $1.26).
+- 4.16: bảng định tuyến duy nhất `hooks/dinh_tuyen.json`, được nạp vào mỗi phiên và sau khi nén, có test bắt buộc khai đủ agent. `guard.js` chặn phiên chính tự ghi file code và tự `curl` web, và chặn giao builder khi chưa phân kỳ, trừ khi brief ghi `PHÂN KỲ: bỏ qua — <lý do>`. Đo trên một đề trộn 5 việc, Opus giao đúng 5 loại agent ở cả hai bản. Bản 4.15 có Opus tự vá code sau critic, 5 lệnh tự chạy và không phân kỳ. Bản 4.16.2 có 0 lần tự vá code, 3 lệnh tự chạy, và bỏ phân kỳ có ghi lý do ($1.24 so với $1.26). Bản 4.16.3 chặn thêm lệnh chờ (`sleep`, `echo waiting`) và việc spawn agent chỉ để chờ. Đề thứ hai là sửa lỗi kèm postmortem. Ở đề này Opus giao đúng builder (TDD), critic, grunt (xác nhận đỏ rồi xanh), writer và critic `van_phong`, và không tự sửa code lần nào ($1.16).
 - 4.15: thêm `/sp:viet`, `sp:writer`, critic `van_phong`, hook `lint_van.js` và `van_phong_tu.json`.
 - 4.14: trình duyệt thật cho mọi quy trình, `stat.js`, sửa `effort.js`, `guard.js`, `setup.js`.
 - 4.13: Playwright MCP đi kèm, `browser.js`, `CHẶN: CẦN NGƯỜI`.

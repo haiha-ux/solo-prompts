@@ -113,6 +113,11 @@ function main() {
   }
   if (tool === 'Bash' || tool === 'PowerShell') {
     const cmd = String(ti.command || '');
+    // Đo thật (v4.16): Opus `echo waiting` / sleep để chờ agent nền — agent nền tự báo khi xong, lượt này là phí.
+    if (/^\s*(sleep\s+\d+|Start-Sleep\b[^;|&]*|timeout\s+\/t\s+\d+|echo\s+["']?[^;|&\n]*(wait|chờ|đợi)[^;|&\n]*["']?)\s*$/i.test(cmd)) {
+      stat.log(input.cwd, 'deny_wait');
+      return deny('[sp] không cần chờ chủ động: agent nền tự gửi thông báo khi xong. Làm việc khác không phụ thuộc kết quả, hoặc kết thúc lượt.');
+    }
     // Đo thật (v4.16): đã giao scout tra PyPI mà Opus vẫn tự curl → web qua lệnh shell cũng là tra web.
     const url = cmd.replace(/"[^"]*localhost[^"]*"|'[^']*localhost[^']*'/g, '').match(/\b(?:curl|wget|Invoke-WebRequest|Invoke-RestMethod|iwr|irm)\b[^|;&\n]*?(https?:\/\/(?!localhost|127\.0\.0\.1)[^\s"'|;)]+)/i);
     if (url) {
@@ -130,6 +135,10 @@ function main() {
     if (!OPUS_BUILTIN.has(String(ti.subagent_type || 'general-purpose')) || /^(haiku|sonnet)$/i.test(String(ti.model || ''))) {
       const d = require('./effort.js').decide(ti.subagent_type, ti.prompt, ti.effort);
       if (d) stat.log(input.cwd, 'effort', ti.subagent_type, d.effort, d.why);
+      if (/\b(wait|placeholder|chờ|đợi)\b/i.test(String(ti.description || '')) && String(ti.prompt || '').length < 400) {
+        stat.log(input.cwd, 'deny_wait', ti.subagent_type);
+        return deny('[sp] không spawn agent chỉ để chờ: agent nền tự báo khi xong. Kết thúc lượt hoặc làm việc khác.');
+      }
       // Đo thật (v4.16): lời nhắc mềm bị bỏ qua, và van "lần 2 cho qua" bị Opus spawn lại ngay để lách.
       // → chỉ qua khi có file phân kỳ, hoặc brief ghi rõ quyết định bỏ: `PHÂN KỲ: bỏ qua — <lý do>` (được ghi vào số liệu).
       if (ti.subagent_type === 'sp:builder' && !hasPhanKy(input.cwd)) {
