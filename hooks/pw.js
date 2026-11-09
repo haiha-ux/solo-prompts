@@ -36,7 +36,7 @@ function hasChrome() {
 }
 // Gói @playwright/mcp: node_modules của plugin (cài khi cache plugin) → bản setup.js cài vào DATA → npx @latest.
 function mcpCli() {
-  for (const base of [root, data]) {
+  for (const base of [data, root]) { // DATA = bản setup.js cập nhật hằng tuần (mới hơn); root = bản ghim trong package-lock (cài khi cache plugin)
     const p = path.join(base, 'node_modules', '@playwright', 'mcp', 'cli.js');
     if (fs.existsSync(p)) return [process.execPath, [p]];
   }
