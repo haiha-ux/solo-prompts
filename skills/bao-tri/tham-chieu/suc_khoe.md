@@ -15,6 +15,7 @@ Lịch: S khi thấy cần · M mỗi mốc · L mỗi tuần + mỗi mốc. Tr�
 | Bộ nhớ | MAP.auto cũ hơn thay đổi file (lệnh đồng bộ trong kien_truc.md) · module trong MAP.auto thiếu ở MAP.md · STATE/findings/CLAUDE.md vượt trần · "Đang chạy" mồ côi · runs/INDEX thiếu | MAP lệch thực tế (nguồn ảo giác #1) | file nhớ vượt trần | dòng mồ côi |
 | Git | `git status`, `git branch --merged`, `git worktree list`, tuổi nhánh | nhánh >30 ngày không commit | uncommitted · nhánh >14 ngày | nhánh/worktree đã merge chưa xóa |
 | Hạ tầng | `.gitignore` có `.codegraph/`, `.env`, `.ai/chi_phi.log`; codegraph stale | secret/.env bị track | codegraph stale >10% | — |
+| Hook & trình duyệt | `node "<plugin>/hooks/stat.js" --summary` (30 ngày) · `<plugin-data>/setup.log` dòng ✗ 7 ngày · `.ai/trinh_duyet.md` · cỡ hồ sơ `du -sm <plugin-data>/browser/*` | `.ai/trinh_duyet.md` chứa pass/token · gate_block 1 agent >30% lần spawn | setup ✗ lặp lại · hồ sơ >500MB · site đăng nhập >60 ngày không dùng · nhiều browser_deny | ảnh/`*-out` >14 ngày |
 
 **Điểm** = 100 − 10×CAO − 5×TRUNG − 1×THẤP (tối thiểu 0). 90+ sạch · 70–89 dọn nhỏ · 50–69 dành 1 phiên dọn · <50 DỪNG tính năng mới, dọn trước.
 Ghi 1 dòng STATE: `Sức khỏe: <điểm> (C<n> T<n> Th<n>) <ngày>` — so với lần trước để thấy xu hướng.

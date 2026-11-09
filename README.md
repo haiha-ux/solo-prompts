@@ -59,7 +59,7 @@ Cùng đề CLI demtu có giao diện rõ, chấm bằng 12 test ẩn (NFD, CRLF
 ## Ràng buộc bằng hook (không chỉ bằng chữ)
 - `hooks/guard.js` (PreToolUse): trong dự án sp, **phiên chính** chạy lệnh test (pytest, uv/poetry run, npm/pnpm/yarn/bun test, make test, tox, go/cargo/dotnet test, node --test, playwright…; bộ `hooks/guard.test.js` 29 ca chặn + 15 ca không chặn) hoặc search/fetch web → bị TỪ CHỐI, kèm hướng dẫn giao `sp:grunt`/`sp:scout`. Agent con (hook input có `agent_id`) luôn được qua. Van thoát: cùng mục tiêu bị chặn 2 lần thì lần 3 cho qua. Lỗi → cho qua.
 - `guard.js` còn chặn phiên chính spawn agent dựng sẵn `Explore` / `general-purpose` / `Plan` (chạy trên model phiên chính = Opus) → dùng `sp:scout`/`sp:grunt`/`sp:builder`/`sp:critic`, hoặc truyền `model: "haiku"|"sonnet"`.
-- `hooks/gate.js` (SubagentStop, v4.11): báo cáo sai khuôn bị trả về agent để sửa ngay, trước khi tới Opus. Áp cho builder (thiếu nhãn), critic (dòng đầu không phải `KẾT:`) và grunt (không phải 1 dòng `OK|FAIL`). Mỗi agent chỉ bị trả về 1 lần, có lỗi thì hook cho qua. Bộ test: `node --test hooks/gate.test.js`.
+- `hooks/gate.js` (SubagentStop, v4.11): báo cáo sai khuôn bị trả về agent để sửa ngay, trước khi tới Opus. Áp cho builder (thiếu nhãn), critic (dòng đầu không phải `KẾT:`) và grunt (không phải 1 dòng `OK|FAIL`). Mỗi agent chỉ bị trả về 1 lần, có lỗi thì hook cho qua. Bộ test: `node --test hooks/*.test.js`.
 - `hooks/effort.js` (gọi từ guard.js khi phiên chính spawn agent, v4.12): tự đặt `effort` cho từng lần spawn theo dòng `CHẾ ĐỘ:`/`LƯỢT:` có sẵn trong brief. Tốn 0 token Opus, không thêm luật chữ. Đã kiểm thật trong transcript agent con.
   | Tình huống | effort | Lý do |
   |---|---|---|
@@ -83,6 +83,17 @@ Cùng đề CLI demtu có giao diện rõ, chấm bằng 12 test ẩn (NFD, CRLF
   - hook cắt output tool: dễ giấu lỗi;
   - `context: fork` cho skill: fork không spawn được agent con.
 - Ghi công: ý tưởng phân biệt phiên chính/agent con bằng `agent_id`, brief đầu phiên, kickoff nhẹ và các số đo giới hạn codegraph lấy từ plugin **crew** — [HYPIAN](https://github.com/TianAn2411/HYPIAN) (An Thien Truong, MIT). Không lấy: memory DB, daemon, đa vai trò (nặng, chưa thử trên Windows, ở quy mô solo ngang grep theo chính số đo của họ).
+
+## v4.14 — áp các nâng cấp cho MỌI quy trình (không chỉ nghiên cứu)
+- **Xây dựng/sửa lỗi:** việc đổi UI web được grunt kiểm bằng trình duyệt thật theo tiêu chí U#/B#. Lỗi front-end được tái hiện trên trình duyệt trước khi sửa. Builder thay TDD cho UI bằng kịch bản trình duyệt. Critic `code` mở trang xác nhận ≥1 tiêu chí. Docs/issue bị chặn thì dùng trình duyệt. Phiên bản builder đã tra được chép vào CLAUDE.md.
+- **Triển khai:** acceptance có smoke trình duyệt trên URL ở mục "Môi trường" của SPEC. Tài khoản test đọc từ biến môi trường. Dashboard hạ tầng cần đăng nhập thì agent trả `CHẶN: CẦN NGƯỜI`. Thêm `.gitignore` cho `playwright-report/`, `test-results/`, `tests/acceptance/.auth/`.
+- **/goal & tiếp tục:** `[!] cần người` là trạng thái dừng hợp lệ (in url rồi kết thúc, không đốt vòng). `/sp:tiep-tuc` không debug việc đó mà mở trang nhờ user, và gợi ý `/clear` khi resume đắt.
+- **Bảo trì:** `hooks/stat.js` ghi số liệu hook vào `.ai/hook_stats.log` (gate trả về, guard chặn, effort đổi, trình duyệt bị chặn). Bảo trì đọc bản `--summary` thay vì đoán. Bảng sức khỏe thêm mục hook & trình duyệt.
+- **Sửa lỗi hook:**
+  - `effort.js` nhận nhãn markdown (`**CHẾ ĐỘ:**`, `LƯỢT 2`), regex rủi ro có ranh giới từ và thêm deploy/prod/secret; builder lượt làm lại không bị hạ effort.
+  - Phiên chính không còn giữ khóa trình duyệt.
+  - `guard.js` bắt test trong `pwsh -c`.
+  - `setup.js` thời gian chờ 240 giây mỗi bước, bước nâng cấp lỗi thì thử lại hôm sau.
 
 ## Plugin & MCP đi kèm
 - **Context7** (docs thư viện đúng phiên bản) được cài TỰ ĐỘNG cùng plugin (`.mcp.json`, server từ xa, không cần key, chỉ 2 tool; Claude Code hoãn nạp schema MCP nên gần như không tốn context). Builder/scout/critic tra docs ở đây trước, web chỉ khi cần issue/changelog/benchmark.

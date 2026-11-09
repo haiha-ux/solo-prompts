@@ -21,7 +21,7 @@ File theo quy mô/chế độ: do `sp:chuyen` ĐẢM BẢO (bảng quy mô trong
 `.gitignore` + `.gitattributes` theo danh sách trong `.ai/ref/kien_truc.md` (mục Bố cục chuẩn) + `.ai/ref/`. Windows: `git config core.longpaths true`. Chưa có git → `git init` + commit đầu. Commit `.ai/` (trừ phần bị ignore) sau mỗi phán quyết/việc xong.
 
 ## 3. codegraph (tùy chọn, không chặn)
-Có code và có lệnh `codegraph` nhưng chưa có `.codegraph/` → `codegraph init`. Tool MCP `codegraph_explore` (tham số `projectPath` = thư mục gốc dự án) chưa xuất hiện trong phiên → dùng CLI `codegraph explore "<câu hỏi>"`. Chưa cài → Grep/Glob, ghi 1 dòng gợi ý cài vào Gotchas; KHÔNG tự cài global.
+Có code và có lệnh `codegraph` nhưng chưa có `.codegraph/` → `codegraph init`. Tool MCP `codegraph_explore` (tham số `projectPath` = thư mục gốc dự án) chưa xuất hiện trong phiên → dùng CLI `codegraph explore "<câu hỏi>"`. Chưa có → hook `setup.js` đang cài nền (có từ phiên sau; user tắt bằng `SP_NO_AUTOINSTALL=1`) — phiên này dùng Grep/Glob, không tự cài thêm.
 
 ## 4. Bắt đầu
 Việc TRỰC TIẾP (phan_loai.md: việc nhỏ, đã rõ yêu cầu, không dữ liệu/người dùng thật, hoặc user nói "nhẹ"/"nhanh"/"dùng 1 lần") → KHÔNG khởi tạo sp: không tạo `.ai/`, không spawn agent — tự viết + tự chạy test như Opus thường (hook guard chỉ áp dụng khi có `.ai/STATE.md`). A/B thật trên CLI demtu: Opus một mình 12/12 test ẩn với $0.32–0.38, quy trình sp 12/12 với $0.66–0.69. Báo user 1 dòng "làm trực tiếp, không cần sp"; muốn quy trình đầy đủ thì user nói.

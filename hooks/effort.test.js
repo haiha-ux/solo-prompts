@@ -21,9 +21,19 @@ test('builder', () => {
   assert.strictEqual(e('sp:builder', 'VIỆC: sửa\nLƯỢT: 3'), 'high');
   assert.strictEqual(e('sp:builder', 'dựng thi_nghiem/E2/ run.py'), 'high');
   assert.strictEqual(e('sp:builder', 'VIỆC: đăng nhập auth JWT'), 'high');
-  assert.strictEqual(e('sp:builder', 'LƯỢT: 3', 'low'), null);                     // điều phối viên quyết
+  assert.strictEqual(e('sp:builder', 'VIỆC: docs', 'low'), null);                  // điều phối viên quyết
 });
 test('scout/grunt untouched', () => {
   assert.strictEqual(e('sp:scout', 'CHẾ ĐỘ: phan_ky'), null);
   assert.strictEqual(e('sp:grunt', 'LƯỢT: 3'), null);
+});
+test('markdown, word bounds, retries', () => {
+  assert.strictEqual(e('sp:critic', '**CHẾ ĐỘ:** `that_bai`'), 'xhigh');
+  assert.strictEqual(e('sp:critic', 'CHẾ ĐỘ: loi\nLƯỢT 2'), 'xhigh');
+  assert.strictEqual(e('sp:builder', 'sửa author/authority typo'), null);
+  assert.strictEqual(e('sp:builder', 'script deploy lên production'), 'high');
+  assert.strictEqual(e('sp:builder', 'viết lại sạch, không import từ thi_nghiem/'), null);
+  assert.strictEqual(e('sp:builder', 'LƯỢT: 2', 'low'), 'high');            // lượt làm lại: không được hạ
+  assert.strictEqual(e('sp:builder', 'LƯỢT: 2', 'xhigh'), null);            // Opus nâng cao hơn: giữ
+  assert.strictEqual(e('sp:critic', 'CHẾ ĐỘ: code\nLƯỢT: 2\ndiff deploy prod'), null);
 });

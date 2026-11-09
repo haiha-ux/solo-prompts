@@ -13,7 +13,7 @@ const DAY = 864e5;
 const force = process.argv.includes('--force');
 const done = [], failed = [];
 
-const sh = (cmd, t = 600e3) => execSync(cmd, { stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8', timeout: t, windowsHide: true });
+const sh = (cmd, t = 240e3) => execSync(cmd, { stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8', timeout: t, windowsHide: true });
 const has = (c) => { try { sh((process.platform === 'win32' ? 'where ' : 'command -v ') + c, 10e3); return true; } catch { return false; } };
 const step = (name, fn) => { try { const r = fn(); if (r) done.push(r); } catch (e) { failed.push(`${name}: ${String(e.stderr || e.message).trim().split('\n').pop().slice(0, 160)}`); } };
 const nodeOk = () => { const [a, b] = process.versions.node.split('.').map(Number); return a > 22 || (a === 22 && b >= 5); };
@@ -73,7 +73,7 @@ function main() {
   });
 
   st.checked = now;
-  if (weekly) st.upgraded = now;
+  if (weekly && !failed.length) st.upgraded = now; // lỗi → mai thử lại, không chờ 7 ngày
   fs.writeFileSync(stampF, JSON.stringify(st));
   const msg = [...done.map((d) => '✓ ' + d), ...failed.map((f) => '✗ ' + f)];
   try { fs.appendFileSync(path.join(data, 'setup.log'), `${new Date().toISOString()} ${msg.join(' | ') || 'ok'}\n`); } catch { /* bỏ qua */ }

@@ -2,6 +2,8 @@
 
 ## TRIỂN KHAI
 - Nguồn sự thật = `SPEC.md` + `tests/acceptance/`. Việc đầu tiên: builder dựng scaffold đúng `kien_truc.md` + run file (`run_file.md`), rồi acceptance test chạy trên code chính thức (tái lập kết quả nghiên cứu trong dung sai SPEC).
+- SPEC có giao diện/URL → acceptance có thêm 1 smoke bằng trình duyệt thật (grunt việc **UI**, `.ai/ref/trinh_duyet.md`) trên URL ở mục "Môi trường" của SPEC (dev/staging/prod, cần đăng nhập?). Kết quả là dòng OK/FAIL in ra (giám khảo /goal không xem ảnh).
+- Acceptance cần tài khoản → đọc từ biến môi trường / `.env` (khai trong `.env.example`, không giá trị thật); SPEC/STATE không ghi mật khẩu/token. Dashboard hạ tầng cần đăng nhập (cloud console, Vercel, Sentry…) → agent trả `CHẶN: CẦN NGƯỜI`, không tự đăng nhập; deploy/push/publish vẫn hỏi user.
 - Code thí nghiệm KHÔNG copy nguyên — viết lại sạch theo kiến trúc. Sản phẩm không import từ `thi_nghiem/`; giữ `thi_nghiem/` mà `cmd` trong sổ cái trỏ tới (bằng chứng tái lập), chỉ xóa phần không ai trỏ.
 - Giả định SPEC sai khi triển khai → KHÔNG vá vòng: spike (dưới).
 

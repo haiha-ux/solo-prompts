@@ -36,8 +36,9 @@ function main() {
   }
   const now = Date.now();
   const r = decide(input, now, lock);
-  if (r) return deny(r);
-  fs.writeFileSync(f, JSON.stringify({ who: input.agent_id || 'main', type: input.agent_type || 'điều phối viên', ts: now }));
+  if (r) { require('./stat.js').log(input.cwd, 'browser_deny', input.agent_type || 'main', lock && lock.type); return deny(r); }
+  if (!input.agent_id) return; // phiên chính chỉ mở trang cho user đăng nhập → không giữ khóa (scout dùng được ngay)
+  fs.writeFileSync(f, JSON.stringify({ who: input.agent_id, type: input.agent_type || 'agent', ts: now }));
 }
 
 if (require.main === module) {

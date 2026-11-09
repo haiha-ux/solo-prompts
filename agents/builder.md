@@ -17,7 +17,7 @@ Tham chiếu nằm ở `.ai/ref/` của project (brief ghi file nào cần đọ
 5. **PHẠM VI**: file sẽ sửa + call site của symbol sẽ đổi (codegraph MCP/CLI nếu có, không thì grep). >5 file hoặc vượt LOẠI TRỪ → DỪNG, trả `PHẠM VI VƯỢT: …`, chưa code. (Brief ghi `PHẠM VI: <n>` — vd scaffold — thì dùng trần đó.)
 
 ## LUẬT CỨNG (critic BLOCK nếu vi phạm)
-- **TDD** cho logic, bugfix, API, thí nghiệm: test đỏ → code tối thiểu → xanh → dọn. Bugfix: test tái hiện đỏ TRƯỚC (`bugfix.md`). Refactor: test hiện có phải xanh TRƯỚC khi sửa; chưa có → viết test đặc tả hành vi hiện tại trước. Không cần TDD: UI/styling, config, docs.
+- **TDD** cho logic, bugfix, API, thí nghiệm: test đỏ → code tối thiểu → xanh → dọn. Bugfix: test tái hiện đỏ TRƯỚC (`bugfix.md`). Refactor: test hiện có phải xanh TRƯỚC khi sửa; chưa có → viết test đặc tả hành vi hiện tại trước. Không cần TDD: config, docs. UI/styling: thay TDD bằng 1 kịch bản trình duyệt (bước + chữ/phần tử mong đợi) ghi ở TEST, trả `CẦN GRUNT: UI <kịch bản>` để grunt chạy.
 - **Kiến trúc**: đúng luật luồng tầng trong CLAUDE.md mục Cấu trúc (chi tiết + bố cục thư mục chuẩn: `kien_truc.md`). Logic mới → service → inject facade. Run file ở root, không logic nghiệp vụ.
 - **Fallback**: sửa hàm = THAY logic cũ · ≤2 nhánh xử lý cùng việc, mỗi nhánh có test · tương thích ngược → adapter riêng · cấm cờ `use_new_logic`/`legacy_mode`/`v2_enabled` và comment "# old logic".
 - **Xóa/đổi tên**: sửa MỌI import/reference trong cùng việc. Không circular (cần dùng chung → tách module C).
@@ -39,7 +39,7 @@ CHECK: fallback <hàm>:<số nhánh> · quét sạch (debug/comment-out/import/T
 MAP: <dòng vai trò đề xuất cho .ai/MAP.md | không đổi module>   (S: dòng cho CLAUDE.md Cấu trúc)
 REUSE/DOCS (L): <dòng thêm .ai/reuse.md | docs đã sửa | không>
 GOTCHA/NỢ: <1 dòng | không>
-CHẶN: <không | THIẾU KIẾN THỨC: <điều chưa biết cách làm> | CẦN TRA CỨU: <lib@ver — câu hỏi> | CẦN GRUNT: <việc cơ học>>  (KHÔNG tự gọi agent khác)
+CHẶN: <không | THIẾU KIẾN THỨC: <điều chưa biết cách làm> | CẦN TRA CỨU: <lib@ver — câu hỏi> | CẦN GRUNT: <việc cơ học> | CẦN NGƯỜI: <url> — <đăng nhập|captcha|2FA>>  (KHÔNG tự gọi agent khác)
 ~~~
 
 Còn ≤5 lượt trước `maxTurns`: dừng việc mới, commit WIP (builder), trả NGAY khối báo cáo có nhãn với `CHẶN: HẾT LƯỢT — đã xong: … / còn: …` — không để bị cắt mất báo cáo.

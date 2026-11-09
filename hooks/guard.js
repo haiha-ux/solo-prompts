@@ -6,6 +6,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
+const stat = require('./stat.js');
 
 const OPUS_BUILTIN = new Set(['Explore', 'general-purpose', 'Plan']);
 const WEB_TOOLS = new Set(['WebSearch', 'WebFetch', 'mcp__plugin_sp_exa__web_search_exa', 'mcp__plugin_sp_exa__web_fetch_exa']);
@@ -29,7 +30,7 @@ function isSpProject(start) {
 // Lệnh có phải là CHẠY TEST không: bỏ chuỗi trong nháy, tách theo ; & | (, xét token đầu của từng đoạn.
 function isTestCommand(cmd) {
   let s = String(cmd || '');
-  const inner = s.match(/\b(?:bash|sh|cmd)\s+(?:-c|\/c)\s+(["'])([\s\S]*?)\1/);
+  const inner = s.match(/\b(?:bash|sh|cmd|pwsh|powershell)(?:\.exe)?\s+(?:-c|\/c|-Command)\s+(["'])([\s\S]*?)\1/i);
   if (inner) s += ' ; ' + inner[2];                       // bash -c "pytest" → xét cả nội dung
   s = s.replace(/"[^"]*"|'[^']*'/g, ' ');                  // echo "run pytest later" không tính
   for (let seg of s.split(/&&|\|\||[;|&\n()]/)) {
@@ -70,21 +71,25 @@ function main() {
     const cmd = String(ti.command || '');
     if (!isTestCommand(cmd)) return;
     if (bump(input.session_id, 'test:' + h(cmd)) > 2) return; // van thoát theo đúng lệnh
+    stat.log(input.cwd, 'deny_test', cmd.slice(0, 60));
     return deny('[sp] LUẬT CỨNG 1: điều phối viên không tự chạy test/kiểm chứng. Giao `sp:grunt` (haiku, rẻ ~1/40 Opus) chạy lệnh này và trả OK/FAIL + test hỏng. (Cùng lệnh bị chặn 2 lần thì lần 3 được qua.)');
   }
   if (tool === 'Agent' || tool === 'Task') {
     // Agent dựng sẵn chạy trên model phiên chính (Opus) — docs sub-agents: Explore/Plan/general-purpose kế thừa model.
     if (!OPUS_BUILTIN.has(String(ti.subagent_type || 'general-purpose')) || /^(haiku|sonnet)$/i.test(String(ti.model || ''))) {
       const d = require('./effort.js').decide(ti.subagent_type, ti.prompt, ti.effort);
+      if (d) stat.log(input.cwd, 'effort', ti.subagent_type, d.effort, d.why);
       if (d) process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'allow', updatedInput: { ...ti, effort: d.effort }, additionalContext: `[sp effort] ${ti.subagent_type} → ${d.effort} (${d.why})` } }));
       return;
     }
     if (bump(input.session_id, 'agent:' + h(ti.description || ti.prompt)) > 2) return;
+    stat.log(input.cwd, 'deny_agent', ti.subagent_type || 'general-purpose');
     return deny(`[sp] agent dựng sẵn "${ti.subagent_type || 'general-purpose'}" chạy trên Opus (đắt ~40× haiku). Dùng sp:scout (tìm/đọc/tra cứu), sp:grunt (lệnh), sp:builder (code), sp:critic (soát) — hoặc truyền model: "haiku"/"sonnet". (Bị chặn 2 lần cùng việc thì lần 3 được qua.)`);
   }
   if (WEB_TOOLS.has(tool)) {
     const target = ti.query || ti.url || ti.prompt || JSON.stringify(ti);
     if (bump(input.session_id, 'web:' + h(target)) > 2) return; // van thoát theo đúng truy vấn/URL
+    stat.log(input.cwd, 'deny_web', tool);
     return deny('[sp] LUẬT CỨNG: điều phối viên không tự search/fetch web. Spawn `sp:scout` (haiku) với brief MỤC TIÊU/VÀO/RA/DỪNG KHI; scout dùng Exa/Context7 và ghi nguồn vào .ai/runs/. (Cùng truy vấn/URL bị chặn 2 lần thì lần 3 được qua — dùng khi chỉ cần mở đúng 1 URL user đưa.)');
   }
 }

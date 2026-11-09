@@ -55,7 +55,7 @@ if ((input.source || 'startup') === 'startup') {
     catch { return false; }
   };
   const missing = ['codegraph', 'gh'].filter((c) => !has(c));
-  if (missing.length) notes.push(`[sp] máy thiếu: ${missing.join(', ')} → ${missing.includes('codegraph') ? 'dùng grep/git ls-files thay codegraph; ' : ''}${missing.includes('gh') ? 'không tạo PR/repo bằng gh.' : ''}`);
+  if (missing.length) notes.push(`[sp] máy thiếu: ${missing.join(', ')} → ${missing.includes('codegraph') ? 'codegraph đang được hook setup cài nền (có từ phiên sau; tắt: SP_NO_AUTOINSTALL=1) — phiên này dùng grep/git ls-files; ' : ''}${missing.includes('gh') ? 'không tạo PR/repo bằng gh.' : ''}`);
 }
 // Brief đầu phiên (ý tưởng sp_brief của crew/HYPIAN, đo: resume rẻ hơn ~26%): đưa sẵn STATE + git + findings → skill không phải `cat` lại.
 if (['startup', 'resume', 'clear', ''].includes(input.source || '')) {

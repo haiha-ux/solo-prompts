@@ -36,6 +36,7 @@ function main() {
   try { input = JSON.parse(fs.readFileSync(0, 'utf8') || '{}'); } catch { return; }
   if (input.stop_hook_active || !isSpProject(input.cwd)) return;
   const reason = check(input.agent_type, input.last_assistant_message);
+  if (reason) require('./stat.js').log(input.cwd, 'gate_block', input.agent_type, reason.slice(0, 60));
   if (reason) process.stdout.write(JSON.stringify({ decision: 'block', reason: '[sp gate] ' + reason }));
 }
 
