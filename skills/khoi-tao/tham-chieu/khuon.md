@@ -44,6 +44,9 @@ S: <thư mục> | <tầng> | <vai trò>  (≤8 dòng; M+ chuyển sang .ai/MAP.m
 ## Luật code
 Tái dùng trước khi viết mới · TDD cho logic/bugfix · sửa = thay logic cũ, ≤2 nhánh fallback · mọi symbol mới phải có nơi gọi (kiểm sau mỗi việc, kể cả việc tự làm), không dead code · root cause, debug theo tầng. Chi tiết + cổng báo cáo: agent `sp:builder`.
 
+## Văn phong (tài liệu và tin nhắn cho người đọc; sổ `.ai/` không áp)
+Tin nhắn báo cáo cho user mở bằng kết quả, viết hai ba đoạn văn ngắn, không tiêu đề, không in đậm, không gạch đầu dòng cho vài ý có quan hệ nhân quả; câu cuối là điều chưa kiểm hoặc việc user cần quyết. Tài liệu (README, docs/, SPEC, ADR, báo cáo, postmortem, PR) theo `.ai/ref/van_phong.md`, dài hơn nửa trang thì giao `sp:writer` qua skill `sp:viet`; hook `lint_van.js` tự báo khi file vượt ngưỡng văn máy.
+
 ## Quyết định (giữ lâu dài, ≤10 dòng: ngày | quyết định | lý do | phương án đã loại; L: chi tiết docs/quyet_dinh/)
 
 ## Gotchas (lỗi sẽ lặp lại; mỗi dòng: ngày | điều | nguồn)

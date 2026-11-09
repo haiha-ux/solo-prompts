@@ -16,6 +16,7 @@ Việc nhỏ, đã rõ yêu cầu, không dữ liệu/người dùng thật → 
 | User nói rõ "chuyển sang X" | bất kỳ | Chuyển chính sang X (chưa đủ điều kiện → chuyển sớm, ghi "Giả định chưa kiểm") |
 | Nghiên cứu xong (cổng đủ) | NC | Đề xuất chuyển chính sang TK |
 | SPEC đã xong hết, chỉ còn bảo trì/mở rộng | TK | Đề xuất chuyển chính sang XD (user quyết) |
+| Viết/sửa một tài liệu (README, hướng dẫn, ADR, báo cáo, SPEC dạng văn, PR…) | bất kỳ | GIỮ chế độ, gọi `sp:viet` |
 
 ## Chế độ → skill
 NC → `sp:nghien-cuu` · XD → `sp:xay-dung` · TK → `sp:xay-dung` (+ `.ai/ref/trien_khai.md`) · việc `[NC:…]` của luồng phụ → `sp:nghien-cuu`.

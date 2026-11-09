@@ -1,0 +1,16 @@
+{
+  "_ghi_chu": "Cụm sáo dùng cho lint_van.js. Sửa tự do: thêm cụm bạn thấy chướng, bỏ cụm bạn thấy bình thường. 'manh' = dấu hiệu mạnh (tính 3 điểm), 'thuong' = 1 điểm.",
+  "manh": [
+    "trong bối cảnh", "đóng vai trò quan trọng", "đóng vai trò then chốt", "giữ vai trò then chốt", "có thể nói rằng", "đáng chú ý là",
+    "điều này cho thấy", "hãy cùng", "bức tranh toàn cảnh", "kỷ nguyên", "cách mạng hóa", "tiềm năng to lớn", "đánh dấu bước ngoặt",
+    "minh chứng cho", "giải pháp toàn diện", "mang lại giá trị vượt trội", "tiến hành thực hiện", "nền tảng vững chắc", "chìa khóa để",
+    "đa dạng và phong phú", "điều quan trọng cần lưu ý",
+    "delve", "tapestry", "testament to", "it's important to note", "it is important to note", "let's dive in", "in today's",
+    "plays a crucial role", "evolving landscape", "seamlessly", "game-changer"
+  ],
+  "thuong": [
+    "một cách hiệu quả", "một cách toàn diện", "góp phần", "nhìn chung", "tóm lại", "kết luận lại", "vô cùng", "hết sức",
+    "hành trình", "tối ưu hóa hiệu quả", "nâng cao hiệu suất", "linh hoạt và", "toàn diện",
+    "crucial", "pivotal", "robust", "leverage", "showcase", "underscore", "comprehensive", "furthermore", "moreover", "in summary", "overall"
+  ]
+}

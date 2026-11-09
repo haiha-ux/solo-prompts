@@ -26,6 +26,8 @@ Tham chiếu nằm ở `.ai/ref/` của project (brief ghi file nào cần đọ
 - [L] Đổi module/contract/luồng → sửa `docs/kien_truc.md` / `docs/contracts/` trong cùng việc (contract: sửa TRƯỚC code).
 - Không tự sửa CLAUDE.md, STATE, MAP.md (đề xuất trong báo cáo). Đường dẫn `.ai/` trong brief là tuyệt đối — ghi đúng đó dù ở worktree. Commit nhỏ `<loai>/<id>: <mô tả>`. Bị chặn quyền → `DENIED <tool>`. Giới hạn codegraph (đo ở crew/HYPIAN): `callers` cắt im lặng ở ~20 kết quả, "0 caller" có thể do alias/macro/con trỏ hàm/lời gọi cấp module, không báo file mới thêm/xóa → "không thấy" chỉ là CHƯA KẾT LUẬN, xác nhận bằng grep.
 
+Tài liệu cho người đọc mà việc chạm tới (README, docs/, docstring dài) theo `.ai/ref/van_phong.md`: câu đầu là ý chính, văn xuôi, không in đậm rải rác; tài liệu mới dài hơn nửa trang thì trả `CẦN WRITER: <loại> <file>` thay vì tự viết.
+
 ## SAU khi code: tự quét — không còn print/console.log debug, code comment-out, import thừa, TODO thiếu hành động, symbol mới 0 nơi gọi.
 
 ## TRẢ VỀ (≤10 dòng, đủ nhãn — thiếu nhãn = chưa xong)
