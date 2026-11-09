@@ -8,6 +8,7 @@ const path = require('path');
 const crypto = require('crypto');
 const stat = require('./stat.js');
 
+const FIXED_FORMAT = new Set(['sp:builder', 'sp:critic', 'sp:grunt', 'sp:writer']);
 const OPUS_BUILTIN = new Set(['Explore', 'general-purpose', 'Plan']);
 const WEB_TOOLS = new Set(['WebSearch', 'WebFetch', 'mcp__plugin_sp_exa__web_search_exa', 'mcp__plugin_sp_exa__web_fetch_exa']);
 // Tiền tố được bóc trước khi xét lệnh: biến môi trường, timeout, trình bọc chạy lệnh.
@@ -141,7 +142,9 @@ function main() {
       }
       // Đo thật (v4.16): lời nhắc mềm bị bỏ qua, và van "lần 2 cho qua" bị Opus spawn lại ngay để lách.
       // → chỉ qua khi có file phân kỳ, hoặc brief ghi rõ quyết định bỏ: `PHÂN KỲ: bỏ qua — <lý do>` (được ghi vào số liệu).
-      if (ti.subagent_type === 'sp:builder' && !hasPhanKy(input.cwd)) {
+      // Sửa lỗi có quy trình riêng (bugfix.md: tái hiện → gốc → sửa; phân kỳ chỉ sau 1 lượt fix thất bại) → không chặn.
+      const isBugfix = /\b(?:fix|bugfix|hotfix)\/|sửa lỗi|tái hiện|bugfix|\bbug\b/i.test(String(ti.prompt || '') + ' ' + String(ti.description || ''));
+      if (ti.subagent_type === 'sp:builder' && !isBugfix && !hasPhanKy(input.cwd)) {
         const skip = String(ti.prompt || '').match(/PHÂN KỲ[\s*_`]*:[\s*_`]*bỏ qua\s*[—–:-]\s*(\S.{3,})/i);
         if (skip) stat.log(input.cwd, 'skip_phanky', skip[1].slice(0, 80));
         else {
@@ -149,7 +152,15 @@ function main() {
           return deny('[sp] LUẬT CỨNG 2: chưa có .ai/phan_ky/ nào — việc đầu mốc cần phân kỳ TRƯỚC khi giao builder. Mức VỪA: spawn 1 sp:scout CHẾ ĐỘ phan_ky gộp 3 lăng kính (lỗi thực tế · đầu vào biên · pre-mortem) + #0, ghi .ai/phan_ky/<mốc>.md, đưa R#/B# vào brief builder. Chỉ khi thật sự không cần (vd sửa typo, đổi tên) mới thêm vào brief builder dòng `PHÂN KỲ: bỏ qua — <lý do cụ thể>`.');
         }
       }
-      if (d) process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'allow', updatedInput: { ...ti, effort: d.effort }, additionalContext: `[sp effort] ${ti.subagent_type} → ${d.effort} (${d.why})` } }));
+      // Đo thật (v4.16, 5/5 lần chạy): brief có `TRẢ VỀ:` riêng làm builder bỏ khối nhãn → gate trả về 1 lượt sonnet. Giữ khuôn bằng câu nối thêm (0 token Opus).
+      let prompt = ti.prompt;
+      if (FIXED_FORMAT.has(ti.subagent_type) && /TRẢ VỀ[\s*_`]*:/i.test(String(prompt || '')) && !String(prompt).includes('[sp khuôn]')) {
+        prompt = String(prompt) + '\n[sp khuôn] Khối TRẢ VỀ có nhãn trong định nghĩa agent của bạn vẫn BẮT BUỘC (dòng đầu/nhãn đúng khuôn); các mục "TRẢ VỀ" của brief trên là phần THÊM, đặt sau khối đó.';
+      }
+      const upd = {};
+      if (d) upd.effort = d.effort;
+      if (prompt !== ti.prompt) upd.prompt = prompt;
+      if (Object.keys(upd).length) process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'allow', updatedInput: { ...ti, ...upd }, ...(d && { additionalContext: `[sp effort] ${ti.subagent_type} → ${d.effort} (${d.why})` }) } }));
       return;
     }
     if (bump(input.session_id, 'agent:' + h(ti.description || ti.prompt)) > 2) return;
