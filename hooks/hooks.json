@@ -17,13 +17,43 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|PowerShell|WebSearch|WebFetch|mcp__plugin_sp_exa__web_search_exa|mcp__plugin_sp_exa__web_fetch_exa",
+        "matcher": "Bash|PowerShell|WebSearch|WebFetch|mcp__plugin_sp_exa__web_search_exa|mcp__plugin_sp_exa__web_fetch_exa|Agent|Task",
         "hooks": [
           {
             "type": "command",
             "command": "node",
             "args": [
               "${CLAUDE_PLUGIN_ROOT}/hooks/guard.js"
+            ],
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "^sp:(builder|critic|grunt)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/gate.js"
+            ],
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/probe.js",
+              "--precompact"
             ],
             "timeout": 5
           }

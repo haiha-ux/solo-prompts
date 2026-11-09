@@ -56,7 +56,19 @@ Cùng đề CLI demtu có giao diện rõ, chấm bằng 12 test ẩn (NFD, CRLF
 
 ## Ràng buộc bằng hook (không chỉ bằng chữ)
 - `hooks/guard.js` (PreToolUse): trong dự án sp, **phiên chính** chạy lệnh test (pytest, uv/poetry run, npm/pnpm/yarn/bun test, make test, tox, go/cargo/dotnet test, node --test, playwright…; bộ `hooks/guard.test.js` 29 ca chặn + 15 ca không chặn) hoặc search/fetch web → bị TỪ CHỐI, kèm hướng dẫn giao `sp:grunt`/`sp:scout`. Agent con (hook input có `agent_id`) luôn được qua. Van thoát: cùng mục tiêu bị chặn 2 lần thì lần 3 cho qua. Lỗi → cho qua.
-- `hooks/probe.js` (SessionStart): nạp sẵn `[sp brief]` = STATE + git log/status + findings (≤8k ký tự) → `/sp:tiep-tuc` không phải đọc lại.
+- `guard.js` còn chặn phiên chính spawn agent dựng sẵn `Explore` / `general-purpose` / `Plan` (chạy trên model phiên chính = Opus) → dùng `sp:scout`/`sp:grunt`/`sp:builder`/`sp:critic`, hoặc truyền `model: "haiku"|"sonnet"`.
+- `hooks/gate.js` (SubagentStop, v4.11): báo cáo sai khuôn bị trả về agent để sửa ngay, trước khi tới Opus. Áp cho builder (thiếu nhãn), critic (dòng đầu không phải `KẾT:`) và grunt (không phải 1 dòng `OK|FAIL`). Mỗi agent chỉ bị trả về 1 lần, có lỗi thì hook cho qua. Bộ test: `node --test hooks/gate.test.js`.
+- `hooks/probe.js` (SessionStart): nạp sẵn `[sp brief]` = STATE + git log/status + findings (≤8k ký tự) → `/sp:tiep-tuc` không phải đọc lại. Từ v4.11, hook này cũng:
+  - đặt tên phiên `sp <chế độ> · <dự án>`;
+  - khi resume lúc cache đã hết hạn và context >60k token: báo số token và số tiền sẽ ghi lại, gợi ý `/clear` + `/sp:tiep-tuc` cho rẻ hơn;
+  - khi nén context (PreCompact): chỉ dẫn bản tóm tắt giữ goal, agent đang chạy, BLOCK/FAIL, giả thuyết, và bỏ output thô.
+- `sp:scout`, `sp:grunt` dùng `omitClaudeMd: true` (brief đã tự đủ): mỗi lần spawn không nạp CLAUDE.md. Đã kiểm thật: grunt không thấy dòng đánh dấu đặt trong CLAUDE.md.
+- Nguồn: v4.11 dựa trên tài liệu chính thức code.claude.com/docs (hooks, sub-agents, skills, plugins, costs…), đọc bằng 3 phiên Sonnet + Playwright MCP ngày 2026-11-09. Đã cân nhắc nhưng chưa làm:
+  - agent teams: tốn ~7× token;
+  - output style ép buộc: lấn quyền chọn của user;
+  - orchestrator agent làm phiên chính: can thiệp quá sâu vào phiên;
+  - hook cắt output tool: dễ giấu lỗi;
+  - `context: fork` cho skill: fork không spawn được agent con.
 - Ghi công: ý tưởng phân biệt phiên chính/agent con bằng `agent_id`, brief đầu phiên, kickoff nhẹ và các số đo giới hạn codegraph lấy từ plugin **crew** — [HYPIAN](https://github.com/TianAn2411/HYPIAN) (An Thien Truong, MIT). Không lấy: memory DB, daemon, đa vai trò (nặng, chưa thử trên Windows, ở quy mô solo ngang grep theo chính số đo của họ).
 
 ## Plugin & MCP đi kèm

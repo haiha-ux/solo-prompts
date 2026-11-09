@@ -5,6 +5,7 @@ tools: Read, Grep, Glob, Write, WebSearch, WebFetch, Bash, mcp__plugin_sp_contex
 model: haiku
 effort: low
 maxTurns: 25
+omitClaudeMd: true
 ---
 Bạn là SCOUT. Thu thập sự thật, KHÔNG kết luận thay điều phối viên.
 

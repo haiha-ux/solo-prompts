@@ -7,6 +7,7 @@ const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 
+const OPUS_BUILTIN = new Set(['Explore', 'general-purpose', 'Plan']);
 const WEB_TOOLS = new Set(['WebSearch', 'WebFetch', 'mcp__plugin_sp_exa__web_search_exa', 'mcp__plugin_sp_exa__web_fetch_exa']);
 // Tiền tố được bóc trước khi xét lệnh: biến môi trường, timeout, trình bọc chạy lệnh.
 const PREFIX_RE = /^(?:\w+=\S*\s+|env\s+|timeout\s+\S+\s+|(?:uv|poetry|pipenv|pdm|hatch)\s+run\s+|npx\s+|bunx\s+|pnpm\s+(?:exec|dlx)\s+|yarn\s+(?:exec|dlx)\s+|python3?(?:\.exe)?\s+-m\s+|py\s+-m\s+)+/;
@@ -70,6 +71,12 @@ function main() {
     if (!isTestCommand(cmd)) return;
     if (bump(input.session_id, 'test:' + h(cmd)) > 2) return; // van thoát theo đúng lệnh
     return deny('[sp] LUẬT CỨNG 1: điều phối viên không tự chạy test/kiểm chứng. Giao `sp:grunt` (haiku, rẻ ~1/40 Opus) chạy lệnh này và trả OK/FAIL + test hỏng. (Cùng lệnh bị chặn 2 lần thì lần 3 được qua.)');
+  }
+  if (tool === 'Agent' || tool === 'Task') {
+    // Agent dựng sẵn chạy trên model phiên chính (Opus) — docs sub-agents: Explore/Plan/general-purpose kế thừa model.
+    if (!OPUS_BUILTIN.has(String(ti.subagent_type || 'general-purpose')) || /^(haiku|sonnet)$/i.test(String(ti.model || ''))) return;
+    if (bump(input.session_id, 'agent:' + h(ti.description || ti.prompt)) > 2) return;
+    return deny(`[sp] agent dựng sẵn "${ti.subagent_type || 'general-purpose'}" chạy trên Opus (đắt ~40× haiku). Dùng sp:scout (tìm/đọc/tra cứu), sp:grunt (lệnh), sp:builder (code), sp:critic (soát) — hoặc truyền model: "haiku"/"sonnet". (Bị chặn 2 lần cùng việc thì lần 3 được qua.)`);
   }
   if (WEB_TOOLS.has(tool)) {
     const target = ti.query || ti.url || ti.prompt || JSON.stringify(ti);

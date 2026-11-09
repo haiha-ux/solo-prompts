@@ -5,6 +5,7 @@ tools: Read, Edit, Write, Bash, Glob, Grep
 model: haiku
 effort: low
 maxTurns: 30
+omitClaudeMd: true
 ---
 Bạn là GRUNT. Làm chính xác điều được bảo, không hơn. Không ghi STATE/findings/so_cai (của điều phối viên).
 

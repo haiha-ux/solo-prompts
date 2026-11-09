@@ -37,6 +37,15 @@ if (force) { console.log(`[sp] đã chép ${syncRef(process.cwd())} file tham ch
 const project = findProject(input.cwd || process.cwd());
 if (!project) process.exit(0); // không phải dự án sp → im lặng, 0 token
 
+const stateTxt = (() => { try { return fs.readFileSync(path.join(project, '.ai', 'STATE.md'), 'utf8'); } catch { return ''; } })();
+const modeOf = () => (stateTxt.match(/Chế độ:\s*([^\n]*?)(?:\s{2,}|$)/m) || [])[1] || '';
+
+// PreCompact: stdout = chỉ dẫn cho bản tóm tắt nén (docs hooks#precompact-output).
+if (process.argv.includes('--precompact')) {
+  console.log(`Dự án sp (chế độ: ${modeOf() || '?'}). Bản tóm tắt PHẢI giữ: mục tiêu /goal đang chạy + điều kiện; việc đang làm và id/tên agent đang chạy nền (để SendMessage tiếp); BLOCK critic chưa đóng; test đang FAIL (id + lỗi); giả thuyết failing/biến thể và kill; quyết định user vừa chốt; đường dẫn file runs/ vừa tạo. BỎ: output lệnh thô, nội dung file đã đọc, báo cáo agent đã xử lý xong (sự thật nằm trong .ai/STATE.md — ghi rằng phải đọc lại nó).`);
+  process.exit(0);
+}
+
 try { syncRef(project); } catch { /* không chặn phiên */ }
 
 const notes = [];
@@ -62,8 +71,18 @@ if (['startup', 'resume', 'clear', ''].includes(input.source || '')) {
   notes.push(cap(b, 8000));
 }
 if (input.source === 'compact') {
-  let mode = '';
-  try { mode = (fs.readFileSync(path.join(project, '.ai', 'STATE.md'), 'utf8').match(/Chế độ:\s*([^\n]*?)(?:\s{2,}|$)/m) || [])[1] || ''; } catch { /* bỏ qua */ }
+  const mode = modeOf();
   notes.push(`[sp] context vừa nén (chế độ: ${mode || '?'}): đọc lại .ai/STATE.md rồi GỌI LẠI skill của chế độ trước khi làm tiếp. LUẬT CỨNG còn hiệu lực: không tự chạy test/đo/thí nghiệm (→ sp:grunt) · không tự search (→ sp:scout) · phân kỳ trước việc đầu mốc/đóng khung giả thuyết · critic kết mốc · chạm kill → failing + phân tích thất bại trước khi refuted.`);
 }
-if (notes.length) console.log(JSON.stringify({ hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: notes.join('\n') } }));
+// Resume khi cache đã hết hạn: request đầu ghi lại TOÀN BỘ context (docs hooks#sessionstart-input, v2.1.251+).
+let systemMessage;
+if (input.prompt_cache_likely_expired && (input.context_tokens || 0) > 60000) {
+  const usd = input.estimated_cache_write_usd ? ` ≈ $${Number(input.estimated_cache_write_usd).toFixed(2)}` : '';
+  systemMessage = `[sp] Resume này gửi lại ~${Math.round(input.context_tokens / 1000)}k token${usd} vì cache đã hết hạn. Rẻ hơn: /clear rồi /sp:tiep-tuc (brief STATE tự nạp, vài k token).`;
+}
+const hso = { hookEventName: 'SessionStart' };
+if (notes.length) hso.additionalContext = notes.join('\n');
+if (!input.session_title && ['startup', 'resume'].includes(input.source)) {
+  hso.sessionTitle = `sp ${modeOf().split(/[(·+|]/)[0]} · ${path.basename(project)}`.replace(/\s+/g, ' ').trim();
+}
+if (notes.length || systemMessage || hso.sessionTitle) console.log(JSON.stringify({ hookSpecificOutput: hso, ...(systemMessage && { systemMessage }) }));
