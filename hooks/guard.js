@@ -119,6 +119,14 @@ function main() {
   if (!isSpProject(input.cwd)) return; // không phải dự án sp (việc TRỰC TIẾP / ngoài sp)
   const tool = input.tool_name;
   const ti = input.tool_input || {};
+  // Đo thật (v4.16.7): bị chặn giao builder, Opus tự heredoc file .ai/phan_ky/ để qua hook → phân kỳ chỉ do sp:scout viết.
+  const pkPath = /[\\/]\.ai[\\/]phan_ky[\\/]|^\.ai[\\/]phan_ky[\\/]/;
+  const pkWrite = (['Write', 'Edit', 'MultiEdit'].includes(tool) && pkPath.test(String(ti.file_path || ''))) ||
+    ((tool === 'Bash' || tool === 'PowerShell') && /(?:>>?|tee\s+(?:-a\s+)?|Set-Content[^|;\n]*|Out-File[^|;\n]*)\s*["']?[^\s"'|;]*\.ai[\\/]phan_ky[\\/]/i.test(String(ti.command || '')));
+  if (pkWrite) {
+    stat.log(input.cwd, 'deny_phanky_self');
+    return deny('[sp] file .ai/phan_ky/ phải do sp:scout CHẾ ĐỘ phan_ky viết (haiku, lăng kính độc lập), không do điều phối viên tự viết. Spawn scout với RA = file đó; số liệu đã có (profile, log) đưa vào VÀO của brief.');
+  }
   // Đo thật (v4.16.5): Opus tự viết docs/hieu_nang.md (lint 4 cờ văn máy) thay vì giao writer.
   const doc = humanDocWrite(tool, ti);
   if (doc) {

@@ -40,3 +40,14 @@ test('spawn chỉ để chờ → chặn; agent dựng sẵn chạy Opus → ch�
 test('agent con spawn → không đụng', () => {
   assert.strictEqual(run({ subagent_type: 'sp:builder', description: 'x', prompt: 'VIỆC: thêm' }, { agent_id: 'a1' }), null);
 });
+test('phiên chính tự viết file phân kỳ → chặn; scout viết → qua', () => {
+  const g = (tool_name, tool_input, extra = {}) => {
+    const out = execFileSync(process.execPath, [path.join(__dirname, 'guard.js')], {
+      input: JSON.stringify({ tool_name, tool_input, cwd: proj, session_id: `pk-${Date.now()}-${n++}`, ...extra }), encoding: 'utf8' });
+    return out ? JSON.parse(out).hookSpecificOutput.permissionDecision : null;
+  };
+  assert.strictEqual(g('Bash', { command: "mkdir -p .ai/phan_ky && cat > .ai/phan_ky/viec2.md <<'EOF'\nR1 ...\nEOF" }), 'deny');
+  assert.strictEqual(g('Write', { file_path: proj + '/.ai/phan_ky/m1.md', content: 'x' }), 'deny');
+  assert.strictEqual(g('Write', { file_path: proj + '/.ai/phan_ky/m1.md', content: 'x' }, { agent_id: 'scout1' }), null);
+  assert.strictEqual(g('Bash', { command: 'cat .ai/phan_ky/m1.md' }), null);
+});
