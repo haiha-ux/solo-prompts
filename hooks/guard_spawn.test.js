@@ -30,7 +30,7 @@ test('brief tự đặt TRẢ VỀ → nối câu giữ khuôn nhãn', () => {
   assert.strictEqual(o.updatedInput.subagent_type, 'sp:builder');
   const c = run({ subagent_type: 'sp:critic', description: 'review', prompt: 'CHẾ ĐỘ: code\nTRẢ VỀ: danh sách lỗi' });
   assert.match(c.updatedInput.prompt, /\[sp khuôn\]/);
-  assert.strictEqual(run({ subagent_type: 'sp:scout', description: 'tra', prompt: 'MỤC TIÊU: x\nTRẢ VỀ: 3 nguồn' }), null); // scout tự do khuôn
+  assert.doesNotMatch(run({ subagent_type: 'sp:scout', description: 'tra', prompt: 'MỤC TIÊU: x\nTRẢ VỀ: 3 nguồn' }).updatedInput.prompt, /\[sp khuôn\]/); // scout tự do khuôn
 });
 test('spawn chỉ để chờ → chặn; agent dựng sẵn chạy Opus → chặn', () => {
   assert.strictEqual(run({ subagent_type: 'sp:grunt', description: 'Wait placeholder check', prompt: 'reply OK' }).permissionDecision, 'deny');
@@ -50,4 +50,10 @@ test('phiên chính tự viết file phân kỳ → chặn; scout viết → qua
   assert.strictEqual(g('Write', { file_path: proj + '/.ai/phan_ky/m1.md', content: 'x' }), 'deny');
   assert.strictEqual(g('Write', { file_path: proj + '/.ai/phan_ky/m1.md', content: 'x' }, { agent_id: 'scout1' }), null);
   assert.strictEqual(g('Bash', { command: 'cat .ai/phan_ky/m1.md' }), null);
+});
+test('agent sp spawn từ phiên chính → foreground (bớt lượt chờ/thức dậy)', () => {
+  const o = run({ subagent_type: 'sp:scout', description: 'tra', prompt: 'MỤC TIÊU: x', run_in_background: true });
+  assert.strictEqual(o.updatedInput.run_in_background, false);
+  assert.strictEqual(o.permissionDecision, 'allow');
+  assert.strictEqual(run({ subagent_type: 'sp:grunt', description: 'test', prompt: 'chạy test', run_in_background: false }), null);
 });

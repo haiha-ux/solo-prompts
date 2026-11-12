@@ -189,6 +189,9 @@ function main() {
       const upd = {};
       if (d) upd.effort = d.effort;
       if (prompt !== ti.prompt) upd.prompt = prompt;
+      // Đo thật (v4.17, 15 lượt Opus): 5/7 spawn chạy nền → 4 lượt chỉ-chữ "đang chờ" + lượt thức dậy khi agent báo xong.
+      // Foreground: kết quả về ngay trong tool_result; nhiều Agent cùng 1 lượt vẫn chạy song song. Tắt: SP_BACKGROUND=1.
+      if (String(ti.subagent_type || '').startsWith('sp:') && ti.run_in_background !== false && process.env.SP_BACKGROUND !== '1') upd.run_in_background = false;
       if (Object.keys(upd).length) process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'allow', updatedInput: { ...ti, ...upd }, ...(d && { additionalContext: `[sp effort] ${ti.subagent_type} → ${d.effort} (${d.why})` }) } }));
       return;
     }
