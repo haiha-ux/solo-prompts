@@ -22,11 +22,11 @@ function check(agent, msg) {
     return miss.length ? `báo cáo thiếu nhãn: ${miss.join(', ')}. Trả lại khối TRẢ VỀ đủ nhãn (≤10 dòng), không làm thêm việc.` : '';
   }
   if (agent === 'sp:critic') {
-    return /^\s*[*`]*KẾT:\s*(PASS|BLOCK|WARN)/i.test(t) ? '' : 'dòng ĐẦU TIÊN phải là `KẾT: PASS | BLOCK <n> | WARN <m>`. Trả lại đúng khuôn của CHẾ ĐỘ, không soát thêm.';
+    return /^\s*[*`]*KẾT\s*[*`]*:\s*\S/i.test(t) ? '' : 'dòng ĐẦU TIÊN phải là `KẾT: PASS | BLOCK <n> | WARN <m>`. Trả lại đúng khuôn của CHẾ ĐỘ, không soát thêm.';
   }
   if (agent === 'sp:grunt') {
     const ok = /^\s*[*`]*(OK|FAIL)\b/m.test(t);
-    return ok && t.length <= 700 ? '' : 'TRẢ VỀ đúng 1 dòng `OK <tóm tắt> [file RA]` hoặc `FAIL <n>/<tổng> | <test hỏng + lỗi> | RA:<file>`; chi tiết để trong file RA. Không chạy thêm lệnh.';
+    return ok && t.length <= 1200 ? '' : 'TRẢ VỀ đúng 1 dòng `OK <tóm tắt> [file RA]` hoặc `FAIL <n>/<tổng> | <test hỏng + lỗi> | RA:<file>`; chi tiết để trong file RA. Không chạy thêm lệnh.';
   }
   return '';
 }

@@ -103,7 +103,7 @@ function hasPhanKy(start) {
     const ai = path.join(dir, '.ai');
     if (fs.existsSync(path.join(ai, 'STATE.md'))) {
       const st = fs.readFileSync(path.join(ai, 'STATE.md'), 'utf8');
-      if (/trực tiếp/i.test(st)) return true;
+      if (/mức\s*[:：]\s*trực tiếp/i.test(st)) return true; // phải là dòng khai mức, không phải chữ bất kỳ
       try { return fs.readdirSync(path.join(ai, 'phan_ky')).some((f) => f.endsWith('.md')); } catch { return false; }
     }
     if (path.dirname(dir) === dir) return true;
@@ -176,7 +176,7 @@ function main() {
       }
       // Đo thật (v4.16): lời nhắc mềm bị bỏ qua; van "lần 2 cho qua" bị lách; dòng "PHÂN KỲ: bỏ qua" bị dùng cả cho tính năng mới.
       // → LUẬT CỨNG 2 tuyệt đối: chỉ qua khi đã có file phân kỳ, brief là sửa lỗi (bugfix.md có quy trình riêng), hoặc STATE ghi mức trực tiếp.
-      const isBugfix = /\b(?:fix|bugfix|hotfix)\/|sửa lỗi|tái hiện|bugfix|\bbug\b/i.test(String(ti.prompt || '') + ' ' + String(ti.description || ''));
+      const isBugfix = /\b(?:fix|bugfix|hotfix)\/|sửa lỗi|tái hiện lỗi|test tái hiện|bugfix|\bbug ?fix\b|CHẾ ĐỘ[\s*_`]*:[\s*_`]*loi\b/i.test(String(ti.prompt || '') + ' ' + String(ti.description || ''));
       if (ti.subagent_type === 'sp:builder' && !isBugfix && !hasPhanKy(input.cwd)) {
         stat.log(input.cwd, 'deny_phanky');
         return deny('[sp] LUẬT CỨNG 2: chưa có .ai/phan_ky/ nào — việc đầu mốc cần phân kỳ TRƯỚC khi giao builder (kể cả việc nhỏ; mức VỪA chỉ tốn 1 scout haiku). Spawn 1 sp:scout CHẾ ĐỘ phan_ky gộp 3 lăng kính (lỗi thực tế · đầu vào biên · pre-mortem) + #0, RA = .ai/phan_ky/<mốc>.md, rồi đưa R#/B# vào tiêu chí + brief builder. Có thể chạy song song với việc của grunt/scout khác.');

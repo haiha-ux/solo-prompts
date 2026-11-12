@@ -54,8 +54,24 @@ function roster() {
     const t = JSON.parse(fs.readFileSync(path.join(__dirname, 'dinh_tuyen.json'), 'utf8')).agents;
     return '[sp định tuyến — agent có sẵn, giao đúng loại; tự làm chỉ khi ≤3 tool call ngắn]\n' +
       t.map((a) => `${a.agent} (${a.model}): ${a.giao} — KHÔNG: ${a.khong}`).join('\n') +
+      '\nTiết kiệm lượt (mỗi lượt Opus ≈ $0.04): kết quả cần ngay cho bước kế → spawn foreground (run_in_background: false); việc độc lập → nhiều Agent trong CÙNG 1 lượt. Sẽ cần SendMessage → nạp nó (ToolSearch select:SendMessage) ngay trong lượt spawn đầu.' +
       '\nAgent nền tự báo khi xong: không sleep/echo chờ, không spawn agent để chờ. Đã giao việc cho agent thì không tự làm lại việc đó (vd tự curl khi scout đang tra). Agent dựng sẵn Explore/general-purpose/Plan chạy trên Opus → không dùng. Skill: sp:viet (tài liệu), sp:chuyen (đổi chế độ), sp:bao-tri.';
   } catch { return ''; }
+}
+
+// Kiểm đủ file của chế độ (thay lượt `ls` của tiep-tuc bước 4 — đo: 9/9 lần chạy tốn 1 lượt Opus cho việc này).
+function fileCheck(state) {
+  const ex = (p) => fs.existsSync(path.join(project, p));
+  const need = [];
+  if (/NGHIÊN CỨU|Luồng phụ: NC/i.test(state)) need.push('.ai/findings.md', '.ai/so_cai.md');
+  if (/XÂY DỰNG|TRIỂN KHAI/i.test(state)) {
+    let cm = ''; try { cm = fs.readFileSync(path.join(project, 'CLAUDE.md'), 'utf8'); } catch { /* chưa có */ }
+    if (!/^## Cấu trúc/m.test(cm)) need.push('CLAUDE.md#Cấu trúc');
+    if (/quy mô\s*[:：]?\s*[ML]\b|·\s*quy mô [ML]\b/i.test(state)) need.push('.ai/MAP.md');
+  }
+  if (/TRIỂN KHAI/i.test(state)) need.push('SPEC.md');
+  const miss = need.filter((p) => p.includes('#') ? true : !ex(p));
+  return `[sp kiểm file] ${miss.length ? 'thiếu: ' + miss.join(', ') + ' → sp:chuyen ĐẢM BẢO' : 'đủ file của chế độ'}`;
 }
 
 const notes = [];
@@ -79,6 +95,7 @@ if (['startup', 'resume', 'clear', ''].includes(input.source || '')) {
     (lg ? '\n## git log -5\n' + lg : '') + (gs ? '\n## git status --short\n' + cap(gs, 1200) : '');
   if (/NGHIÊN CỨU|Luồng phụ: NC/.test(state)) b += '\n## .ai/findings.md\n' + cap(rdf('.ai/findings.md'), 2500);
   notes.push(cap(b, 8000));
+  notes.push(fileCheck(state));
   notes.push(roster());
 }
 if (input.source === 'compact') {

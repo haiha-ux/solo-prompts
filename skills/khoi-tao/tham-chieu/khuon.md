@@ -8,22 +8,14 @@ Trạng thái sống: .ai/STATE.md (đọc đầu phiên). Kết quả subagent:
 
 ## Điều phối — thước đo là TIỀN, không phải số spawn (Opus đắt nhất; Sonnet ≈ ½ Opus; alias `haiku` hiện là Haiku 5.5 ≈ 1/40 Opus — chạy thật: 4 lượt haiku tốn $0.05 trong khi Opus tốn $1.85)
 - Mình (Opus) chỉ giữ: hiểu yêu cầu, quyết định, phán quyết, hội tụ, ghi sổ. Việc khác → GIAO model rẻ nhất làm được (bảng dưới). Tự làm chỉ khi ≤3 tool call ngắn hoặc cần context đang giữ — KHÔNG BAO GIỜ tự chạy test/benchmark/build (luôn grunt). Báo cáo kết mốc in `ĐỊNH TUYẾN: haiku n · sonnet m · tự chạy k`.
-  | Việc | Giao |
-  |---|---|
-  | Chạy test/lint/build/lệnh bất kỳ (mọi độ dài), chạy lặp, quét tham số | `sp:grunt` |
-  | Grep/đếm/liệt kê call site, đọc log/diff dài rồi tóm tắt, sinh MAP, rename, format, cập nhật import, dọn file | `sp:grunt` |
-  | Đọc ≥2 file chỉ để trả lời câu hỏi (không sửa) · tra web/docs/phiên bản (mọi lượng) · phân tích ảnh hưởng | `sp:scout` |
-  | Động não từng lăng kính (`.ai/ref/phan_ky.md`) | `sp:scout` × N song song |
-  | Code logic mới, bugfix, refactor, dựng thí nghiệm/scaffold | `sp:builder` (sonnet) |
-  | Phản biện code/giả thuyết/kiến trúc/tài liệu, phân tích thất bại, cố vấn | `sp:critic` (sonnet) |
-  | Tài liệu cho người đọc (README, hướng dẫn, ADR, báo cáo, postmortem, PR) | `sp:writer` qua skill `sp:viet` |
+  Bảng việc → agent: khối `[sp định tuyến]` hook nạp mỗi phiên (nguồn duy nhất `hooks/dinh_tuyen.json`).
   Brief cho builder/critic có phần cơ học đi kèm (chạy test, quét, đọc log) → TÁCH phần đó cho grunt/scout trước, ghi `CƠ HỌC ĐÃ TÁCH:` trong brief.
 - Agent: `sp:scout` `sp:grunt` (haiku) · `sp:builder` `sp:critic` `sp:writer` (sonnet). Bảng này có thể cũ hơn plugin; bản đúng là khối `[sp định tuyến]` hook nạp đầu phiên — hai bên lệch thì theo khối đó. Agent con KHÔNG gọi agent con: cần tra cứu/việc cơ học → chúng trả `CẦN TRA CỨU …`/`CHẶN …`, mình spawn.
 - Brief ≤10 dòng: MỤC TIÊU (đo được) / VÀO (đường dẫn trong "nháy kép", không dán nội dung) / RA / LOẠI TRỪ / TRA CỨU (`T1–T6` hoặc `không cần: <lý do>`) / DỪNG KHI / TRẢ VỀ (chỉ cho scout; builder/critic/grunt/writer có khuôn trả về cố định trong agent — muốn thêm mục thì ghi `THÊM: …`, không viết khuôn mới). critic thêm CHẾ ĐỘ: code|gia_thuyet|that_bai|loi|ke_hoach|kien_truc|suc_khoe|tu_van. Có `.ai/phan_ky/<chủ đề>.md` liên quan → ghi đường dẫn vào VÀO (critic đối chiếu R#/B#/U#).
 - Đường dẫn `.ai/` trong brief luôn TUYỆT ĐỐI (cây chính). ≤3 agent nền cùng lúc (phân kỳ nhiều scout → chạy theo đợt 3); 2 builder song song chỉ khi mỗi người 1 worktree, tập file không giao.
 - Cùng chủ đề → SendMessage agent cũ (rẻ hơn spawn). Chủ đề mới → spawn mới. critic LUÔN spawn mới.
 - Ngân sách tính theo giá: `chi phí = tok × hệ số` (haiku 1 · sonnet 20 · opus 40 nếu haiku là 5.5; 1 · 2 · 4 nếu là 4.5). Phần đắt nhất là CONTEXT CỦA MÌNH: không `cat` cả file tham chiếu dài — đưa đường dẫn cho agent; tự đọc thì chỉ mục cần (`grep -n`, `sed -n a,bp`). Không giới hạn số spawn haiku (trừ trần riêng của phân kỳ); theo dõi tổng: XD/TK ≈ 400k đơn vị/mốc · NC ≈ 800k đơn vị/`/goal`. Vượt → ghi lý do vào STATE; vượt gấp rưỡi → dừng, báo user 1 dòng chi phí.
-- **Mỗi lượt của mình đọc lại TOÀN BỘ context (~80–110k token) — số lượt mới là chi phí lớn nhất** (đo thật: 35 lượt Opus = $1.84, trong đó 6 lượt chỉ để ghi log). Vì vậy: spawn các agent độc lập trong CÙNG 1 lượt · KHÔNG mở lượt riêng chỉ để ghi sổ/log — ghép vào lệnh Bash cần chạy tiếp theo · `.ai/chi_phi.log` ghi GỘP 1 lệnh khi kết mốc (`ngày | vai | việc | tok | đơn vị` cho mọi spawn trong mốc, tok lấy từ `subagent_tokens`) · không lượt "chờ/kiểm tra" — agent nền tự báo khi xong.
+- **Mỗi lượt của mình đọc lại TOÀN BỘ context (~80–110k token) — số lượt mới là chi phí lớn nhất** (đo thật: 35 lượt Opus = $1.84, trong đó 6 lượt chỉ để ghi log). Vì vậy: spawn các agent độc lập trong CÙNG 1 lượt · KHÔNG mở lượt riêng chỉ để ghi sổ/log — ghép vào lệnh Bash cần chạy tiếp theo · `.ai/chi_phi.log` ghi GỘP 1 lệnh khi kết mốc (`ngày | vai | việc | tok | đơn vị` cho mọi spawn trong mốc, tok lấy từ `total_tokens`) · không lượt "chờ/kiểm tra" — agent nền tự báo khi xong.
 - Động não PHÂN KỲ → HỘI TỤ theo `.ai/ref/phan_ky.md` khi: yêu cầu mới/mơ hồ, chọn kiến trúc/stack, trước khi build tính năng dùng thật, đóng khung/chốt giả thuyết, mở mốc, lỗi lạ. Danh sách trong đó chỉ là gợi ý — luôn thêm lăng kính "còn thiếu".
 - Chỉ mình ghi STATE, findings, so_cai, CLAUDE.md, MAP.md. Ghi STATE sau mỗi QUYẾT ĐỊNH (gộp nhiều kết quả thành 1 lần ghi).
 - Tin "OK" chỉ khi có lệnh kiểm chứng. Quyết định dựa trên 1 nguồn/1 kết quả → tự mở file gốc đọc có giới hạn.

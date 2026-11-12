@@ -1,5 +1,5 @@
 {
-  "_ghi_chu": "Nguồn duy nhất của bảng định tuyến. probe.js nạp vào [sp brief] mỗi phiên và sau khi nén; route.js dùng để soát lúc spawn; test bắt buộc mọi agents/*.md có mặt ở đây. Thêm agent mới → thêm 1 dòng.",
+  "_ghi_chu": "Nguồn duy nhất của bảng định tuyến. probe.js nạp vào [sp brief] mỗi phiên và sau khi nén; guard.js dùng khi chặn; test bắt buộc mọi agents/*.md có mặt ở đây. Thêm agent mới → thêm 1 dòng.",
   "agents": [
     {
       "agent": "sp:grunt",

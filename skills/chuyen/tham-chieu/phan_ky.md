@@ -2,7 +2,7 @@
 
 ## Khi nào BẮT BUỘC
 Yêu cầu mới có >1 cách hiểu hoặc chưa có tiêu chí chấp nhận · chọn kiến trúc/stack · trước khi build tính năng dùng THẬT (người dùng/dữ liệu/phần cứng thật) · đóng khung giả thuyết NC · trước khi chốt giả thuyết `blk` · mở mốc · lỗi lạ sau 1 lượt fix thất bại · user hỏi "còn gì nữa / đã nghĩ đủ chưa".
-Bỏ qua: việc ≤1 file đã có test; đã có `.ai/phan_ky/<chủ đề>.md` cùng chủ đề và yêu cầu không đổi.
+Không bỏ qua cho việc mới (hook chặn giao builder khi chưa có file phân kỳ). Miễn: sửa lỗi (theo `bugfix.md`), và khi đã có `.ai/phan_ky/<chủ đề>.md` cùng chủ đề, yêu cầu không đổi.
 TRẦN: 1 phân kỳ / mốc (XD/TK) hoặc / nhóm giả thuyết (NC) — biến thể của cùng H dùng lại file cũ, chỉ chạy thêm lăng kính #9 + #0 · ≤8 scout cho lăng kính (gộp 2 lăng kính/scout nếu cần) + ≤3 scout bổ sung từ #0 + 1 scout gộp — tổng ≤12, chạy theo đợt ≤3 · chi phí ≈ (overhead ~15k + 3–5k việc) × số scout, tính theo giá haiku.
 
 ## Bước 1 — CHỌN LĂNG KÍNH (điều phối viên, ≤2 phút)
@@ -44,7 +44,7 @@ TRẢ VỀ: đường dẫn + 3 mục lạ nhất
 Lăng kính #0 trả thêm `LĂNG KÍNH MỚI:` → nếu có loại danh sách quan trọng chưa phủ → chạy thêm 1 vòng scout cho nó (tối đa 1 vòng bổ sung).
 
 ## Bước 3 — HỘI TỤ (1 lần)
-1 scout (haiku) GỘP: đọc các file phân kỳ → gộp trùng, giữ id nguồn → bản nháp. Rồi MÌNH (điều phối viên) xếp hạng `xác suất × tác động` → giữ top ≤25, ghi `.ai/phan_ky/<chủ đề>.md` (≤50 dòng):
+1 scout (haiku) GỘP: đọc các file phân kỳ → gộp trùng, giữ id nguồn → bản nháp. Scout gộp cũng xếp hạng `xác suất × tác động` → giữ top ≤25 và GHI `.ai/phan_ky/<chủ đề>.md` (hook chặn điều phối viên tự ghi file này; mình chỉ đọc và sửa thứ hạng nếu cần qua SendMessage) (≤50 dòng):
 ~~~
 Chủ đề: … · Ngày: … · Kích hoạt vì: … · Lăng kính đã dùng: #0,#1,#2,… (+ lăng kính mới: …)
 ## Rủi ro/sự cố   (R# | mô tả | xác suất C/T/Th | tác động | dấu hiệu sớm | giảm thiểu)
